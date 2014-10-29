@@ -15,4 +15,4 @@
 * Waits and repeats
 
 
-**Please visit the forum for installation and usage instructions.**
+**Please visit [the forum](http://clraik.com/forum/showthread.php?t=33739) for installation and usage instructions.**
