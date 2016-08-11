@@ -23,5 +23,5 @@ if debugmode == 0:
     else:
         print("Debug mode was turned off, but incorrect args sent, so fell back to debug mode.")
 
-acc = NeoAccount(neouser, neopass, proxyaddress)
-acc.login()
+account = NeoAccount(neouser, neopass, proxyaddress)
+account.login()
