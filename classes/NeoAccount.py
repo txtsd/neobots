@@ -53,7 +53,7 @@ class NeoAccount:
                                             'username': self.un,
                                             'password': self.pw,
                                             'destination': "http://www.neopets.com/index.phtml"}, timeout=60)
-        print self.result.url
+        print(self.result.url)
         if 'badpassword' in self.result.url:
             return False, 'Bad password'
         elif 'hello' in self.result.url:

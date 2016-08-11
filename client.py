@@ -27,7 +27,7 @@ if debugmode == 0:
         neouser = sys.argv[1]  # Get args from commandline
         neopass = sys.argv[2]  # Get args from commandline
     else:
-        print "Debug mode was turned off, but incorrect args sent, so fell back to debug mode."
+        print("Debug mode was turned off, but incorrect args sent, so fell back to debug mode.")
 
 acc = NeoAccount(neouser, neopass, proxyaddress)
 acc.login()
