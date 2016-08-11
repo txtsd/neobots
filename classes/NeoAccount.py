@@ -12,10 +12,12 @@ class NeoAccount:
 
     domain = 'http://www.neopets.com'
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1951.5 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-us,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate'}
+        'Accept-Language': 'en-US,en;q=0.7,ja;q=0.3',
+        'Accept-Encoding': 'gzip, deflate',
+        'Dnt': '1'
+    }
 
     def __init__(self, username, password, proxy=""):
         self.username = username
