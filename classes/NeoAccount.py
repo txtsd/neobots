@@ -18,7 +18,7 @@ class NeoAccount:
         'Accept-Encoding': 'gzip, deflate',
     }
 
-    def __init__(self, username, password, proxy=""):
+    def __init__(self, username, password, proxy=''):
         self.username = username
         self.password = password
         self.proxy = proxy
@@ -28,7 +28,7 @@ class NeoAccount:
         self.session.mount('http://', adapter)
         self.session.headers = self.headers
 
-        if (self.proxy != ""):
+        if (self.proxy != ''):
             self.session.proxies = {'http': 'http://' + self.proxy + '/'}
 
     def get(self, url, param={}, referer='', head={}):

@@ -6,9 +6,9 @@
 import sys
 from classes.NeoAccount import NeoAccount
 
-neouser = ""  # Neopets Username
-neopass = ""  # Neopets Password
-proxyaddress = ""  # Optional proxy eg. "127.0.0.1:8888", leave at "" for none
+neouser = ''  # Neopets Username
+neopass = ''  # Neopets Password
+proxyaddress = ''  # Optional proxy eg. '127.0.0.1:8888', leave at '' for none
 
 if len(sys.argv) == 4:
     neouser = sys.argv[1]  # Get args from commandline
