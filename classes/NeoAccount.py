@@ -31,25 +31,34 @@ class NeoAccount:
         if (self.proxy != ""):
             self.session.proxies = {'http': 'http://' + self.proxy + '/'}
 
-    def get(self, url, referer=''):
+    def get(self, url, param={}, referer='', head={}):
         if url[0] == '/':
             url = self.domain + url
         if referer != '':
-            self.result = self.session.get(
-                url, headers={'Referer': referer}, timeout=20)
-        else:
-            self.result = self.session.get(url, timeout=20)
-        return self.result
+            if referer[0] == '/':
+                referer = self.domain + referer
+            head['Referer'] = referer
+        result = self.session.get(
+            url,
+            params=param,
+            headers=head,
+        )
+        return result
 
-    def post(self, url, data, referer=''):
+    def post(self, url, data={}, param={}, referer='', head={}):
         if url[0] == '/':
             url = self.domain + url
         if referer != '':
-            self.result = self.session.post(
-                url, data=data, headers={'Referer': referer}, timeout=20)
-        else:
-            self.result = self.session.post(url, data=data, timeout=20)
-        return self.result
+            if referer[0] == '/':
+                referer = self.domain + referer
+            head['Referer'] = referer
+        result = self.session.post(
+            url,
+            params=param,
+            data=data,
+            headers=head,
+        )
+        return result
 
     def login(self):
         self.result = self.session.get(
