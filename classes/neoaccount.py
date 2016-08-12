@@ -36,7 +36,7 @@ class NeoAccount:
             self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(max_retries=3)
         self.session.mount('http://', adapter)
-        self.session.headers = self.headers
+        self.session.headers.update(self.headers)
 
         if (self.proxy != ''):
             self.session.proxies = {'http': 'http://' + self.proxy + '/'}
