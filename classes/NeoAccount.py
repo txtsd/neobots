@@ -6,6 +6,7 @@
 """Handles the account, login, and connections"""
 
 import requests
+import re
 
 
 class NeoAccount:
@@ -61,19 +62,29 @@ class NeoAccount:
         return result
 
     def login(self):
-        self.result = self.session.get(
-            'http://www.neopets.com/index.phtml', timeout=60)
-        self.result = self.session.post('http://www.neopets.com/login.phtml',
-                                        data={
-                                            'username': self.username,
-                                            'password': self.password,
-                                            'destination': "http://www.neopets.com/index.phtml"}, timeout=60)
-        print(self.result.url)
-        if 'badpassword' in self.result.url:
-            return False, 'Bad password'
-        elif 'hello' in self.result.url:
-            return False, 'Birthday locked'
-        elif 'login' in self.result.url:
-            return False, 'Frozen'
-        elif 'index' in self.result.url:
-            return True, 'Logged in'
+        result = self.get('/inventory.phtml')
+        if 'loginpage.phtml' in result.url:
+            print('Not logged in. Logging in.')
+            result = self.post(
+                '/login.phtml',
+                data={
+                    'username': self.username,
+                    'password': self.password,
+                    'destination': '%2Findex.phtml',
+                }
+            )
+            if 'badpassword' in result.url:
+                print('Bad password!')
+                return False, result.url
+            elif 'hello' in result.url:
+                print('Birthday locked!')
+                return False, result.url
+            elif 'login' in result.url:
+                print('Frozen!')
+                return False, result.url
+            elif 'index' in result.url:
+                print('Successfully logged in!')
+                return True
+        elif re.search('user=' + self.username, result.text):
+            print('Already logged in!')
+            return True
