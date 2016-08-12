@@ -72,7 +72,7 @@ class NeoAccount:
 
     def login(self):
         result = self.get('/inventory.phtml')
-        if 'loginpage.phtml' in result.url:
+        if 'login/index.phtml' in result.url:
             print('Not logged in. Logging in.')
             result = self.post(
                 '/login.phtml',
