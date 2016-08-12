@@ -6,7 +6,9 @@
 """Handles the account, login, and connections"""
 
 import requests
+import pickle
 import re
+import os
 
 
 class NeoAccount:
@@ -23,8 +25,15 @@ class NeoAccount:
         self.username = username
         self.password = password
         self.proxy = proxy
+        self.fname_pickle = 'data/%s.session' % self.username
 
-        self.session = requests.Session()
+        if not os.path.exists('data'):
+            os.makedirs('data')
+        if os.path.isfile(self.fname_pickle):
+            with open(self.fname_pickle, 'rb') as file:
+                self.session = pickle.load(file)
+        else:
+            self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(max_retries=3)
         self.session.mount('http://', adapter)
         self.session.headers = self.headers
@@ -84,6 +93,8 @@ class NeoAccount:
                 return False, result.url
             elif 'index' in result.url:
                 print('Successfully logged in!')
+                with open(self.fname_pickle, 'wb') as file:
+                    pickle.dump(self.session, file, pickle.HIGHEST_PROTOCOL)
                 return True
         elif re.search('user=' + self.username, result.text):
             print('Already logged in!')
