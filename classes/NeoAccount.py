@@ -22,8 +22,6 @@ class NeoAccount:
         self.username = username
         self.password = password
         self.proxy = proxy
-        self.referrer = None
-        self.result = None
 
         self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(max_retries=3)
