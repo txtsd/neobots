@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------
 
 import sys
-from classes.NeoAccount import NeoAccount
+from classes.neoaccount import NeoAccount
 
 neouser = ''  # Neopets Username
 neopass = ''  # Neopets Password
