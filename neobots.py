@@ -3,7 +3,6 @@
 # ------------------------------txtsd----------------------------------
 # ---------------------------------------------------------------------
 
-import sys
 from classes.neoaccount import NeoAccount
 
 neouser = ''  # Neopets Username
