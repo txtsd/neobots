@@ -21,10 +21,11 @@ class NeoAccount:
         'Accept-Encoding': 'gzip, deflate',
     }
 
-    def __init__(self, username, password, proxy=''):
+    def __init__(self, username, password, proxy='', pin = ''):
         self.username = username
         self.password = password
         self.proxy = proxy
+        self.pin = pin
         self.fname_pickle = 'data/%s.session' % self.username
 
         if not os.path.exists('data'):
