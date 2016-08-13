@@ -4,10 +4,22 @@
 # ---------------------------------------------------------------------
 
 from classes.neoaccount import NeoAccount
+from classes.config import Config
 
-neouser = ''  # Neopets Username
-neopass = ''  # Neopets Password
-proxyaddress = ''  # Optional proxy eg. '127.0.0.1:8888', leave at '' for none
+configurator = Config()
+account_lines = None
+neoaccounts = list()
 
-account = NeoAccount(neouser, neopass, proxyaddress)
-account.login()
+with open(
+    '%s/%s' % (configurator.dir_data, configurator.file_accounts), 'r'
+) as file:
+    account_lines = file.readlines()
+
+for line in account_lines:
+    username, password, proxy, pin = line.split('|')
+    neoaccounts.append(
+        NeoAccount(username, password, proxy, pin)
+    )
+
+# TODO: Add threading to load multiple neoaccounts simultaneously
+accounturbator = neoaccounts[0].login()
