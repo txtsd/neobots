@@ -21,7 +21,7 @@ class NeoAccount:
         'Accept-Encoding': 'gzip, deflate',
     }
 
-    def __init__(self, username, password, proxy='', pin = ''):
+    def __init__(self, username, password, proxy='', pin=''):
         self.username = username
         self.password = password
         self.proxy = proxy
