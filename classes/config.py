@@ -17,7 +17,7 @@ class Config:
     file_config = 'config.json'
     file_accounts = 'accounts.txt'
 
-    default_config = OrderedDict(
+    DEFAULT_CONFIG = OrderedDict(
         {
             'account': {
                 'username': '',
@@ -166,5 +166,5 @@ class Config:
 
     def _create_config(self):
         with open(Config.file_config, 'w') as file:
-            json.dump(Config.default_config, file, indent=2)
+            json.dump(Config.DEFAULT_CONFIG, file, indent=2)
         self.refresh()
