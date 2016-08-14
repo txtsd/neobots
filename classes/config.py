@@ -140,15 +140,15 @@ class Config:
         self.config = None
         self.refresh()
 
-    def get(self, key):
+    def get(self, key1, key2):
         try:
-            return self.config[key]
+            return self.config[key1][key2]
         except KeyError:
             return False
 
-    def set(self, key, value):
+    def set(self, key1, key2, value):
         try:
-            self.config[key] = value
+            self.config[key1][key2] = value
             return True
         except:
             return False
