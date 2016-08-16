@@ -134,7 +134,7 @@ class Config:
             ('train', OrderedDict(
                 [
                     ('mysteryIsland', False),
-                    ('secretNinjaAcademy', False),
+                    ('secretNinjaSchool', False),
                     ('swashBucklingAcademy', False),
                 ]
             )),
