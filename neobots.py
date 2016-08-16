@@ -6,15 +6,10 @@
 from classes.neoaccount import NeoAccount
 from classes.config import Config
 
-configurator = Config()
 account_lines = None
 neoaccounts = list()
 
-with open(
-    '%s/%s' % (configurator.dir_data, configurator.file_accounts), 'r'
-) as file:
-    account_lines = file.readlines()
-
+account_lines = Config.readAccounts()
 for line in account_lines:
     username, password, proxy, pin = line.split('|')
     neoaccounts.append(
@@ -22,4 +17,6 @@ for line in account_lines:
     )
 
 # TODO: Add threading to load multiple neoaccounts simultaneously
-accounturbator = neoaccounts[0].login()
+neoaccount = neoaccounts[0]
+configurator = Config(neoaccount)
+login_status = neoaccount.login()
