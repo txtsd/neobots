@@ -7,6 +7,7 @@
 
 from collections import OrderedDict
 import json
+import sys
 import os
 
 
@@ -136,6 +137,17 @@ class Config:
         }
     )
 
+    DEFAULT_ACCOUNTS = """# Possible formats:
+#    neouser|neopass|proxy:port|PIN
+#    neouser|neopass|proxy:port|
+#    neouser|neopass||PIN
+#    neouser|neopass||
+# proxy:port and PIN are optional
+# Example proxy:port:
+#    localhost:8888
+#    8.8.4.4:8080
+"""
+
     def __init__(self, account):
         self.config = None
         self.refresh()
@@ -164,7 +176,43 @@ class Config:
         with open(Config.file_config, 'w') as file:
             json.dump(self.config, file, indent=2)
 
+    def readAccounts():
+        try:
+            account_lines = None
+            valid_account_lines = []
+            with open(
+                '%s/%s' %
+                (Config.dir_data, Config.file_accounts),
+                'r'
+            ) as file:
+                account_lines = file.read().split('\n')
+            if account_lines == Config.DEFAULT_ACCOUNTS.split('\n'):
+                Config._advice_exit()
+            for line in account_lines:
+                if len(line) != 0:
+                    if line.strip(' ').strip('\t')[0] != '#':
+                        valid_account_lines.append(line)
+            if len(valid_account_lines) == 0:
+                Config._advice_exit()
+            print(valid_account_lines)
+            return valid_account_lines
+        except FileNotFoundError:
+            with open(
+                '%s/%s' %
+                (Config.dir_data, Config.file_accounts),
+                'w'
+            ) as file:
+                file.write(Config.DEFAULT_ACCOUNTS)
+            Config._advice_exit()
+
     def _create_config(self):
         with open(Config.file_config, 'w') as file:
             json.dump(Config.DEFAULT_CONFIG, file, indent=2)
         self.refresh()
+
+    def _advice_exit():
+        print(
+            'Configure %s/%s and run again.' %
+            (Config.dir_data, Config.file_accounts)
+        )
+        sys.exit()
