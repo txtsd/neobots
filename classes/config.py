@@ -105,7 +105,7 @@ class Config:
                     ('jhudorasBluff', False),
                     ('kitchen', False),
                     ('taelia', False),
-                    ('coincidence', False),
+                    ('theCoincidence', False),
                 ]
             )),
             ('someNP', OrderedDict(
