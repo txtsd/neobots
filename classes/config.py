@@ -22,12 +22,12 @@ class Config:
     # and loading from JSON, and to access data like dictionaries
     DEFAULT_CONFIG = OrderedDict(
         [
-            ('account', OrderedDict(
+            ('neopets', OrderedDict(
                 [
                     ('username', ''),
                     ('password', ''),
                     ('proxy', ''),
-                    ('neoPin', ''),
+                    ('pin', ''),
                 ]
             )),
             ('freebies', OrderedDict(
