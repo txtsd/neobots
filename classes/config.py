@@ -30,6 +30,13 @@ class Config:
                     ('pin', ''),
                 ]
             )),
+            ('neobots', OrderedDict(
+                [
+                    ('minWait', 0.0),
+                    ('maxWait', 0.5),
+                    ('randomMethod', 'uniform'),
+                ]
+            )),
             ('freebies', OrderedDict(
                 [
                     ('adventCalendar', True),
