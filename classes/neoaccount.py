@@ -26,10 +26,11 @@ class NeoAccount:
         self.password = password
         self.proxy = proxy
         self.pin = pin
-        self.fname_pickle = 'data/%s.session' % self.username
+        self.net_cache = 'cache'
+        self.fname_pickle = '%s/%s.session' % (self.net_cache, self.username)
 
-        if not os.path.exists('data'):
-            os.makedirs('data')
+        if not os.path.exists(self.net_cache):
+            os.makedirs(self.net_cache)
         if os.path.isfile(self.fname_pickle):
             with open(self.fname_pickle, 'rb') as file:
                 self.session = pickle.load(file)
