@@ -176,6 +176,11 @@ class Config:
     def __init__(self, account):
         self.config = None
         self.refresh()
+        self.config['neopets']['username'] = account.username
+        self.config['neopets']['password'] = account.password
+        self.config['neopets']['proxy'] = account.proxy
+        self.config['neopets']['pin'] = account.pin
+        self.sync()
 
     def get(self, key1, key2):
         try:
