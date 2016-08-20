@@ -3,6 +3,7 @@
 # ------------------------------txtsd----------------------------------
 # ---------------------------------------------------------------------
 
+from datetime import datetime
 import random
 
 
@@ -461,3 +462,15 @@ class Dailies:
 
     def process_wishingWell(self):
         pass
+
+    def saveHTML(self, method, html):
+        user = configurator['neopets']['username']
+        time = datetime.strftime(datetime.now(), '%Y_%m_%d')
+        filename = '%s/%s__%s__%s.html' % (
+            configurator.dir_data,
+            user,
+            method,
+            time
+        )
+        with open(filename, 'wb') as file:
+            file.write(html)
