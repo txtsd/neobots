@@ -173,7 +173,7 @@ class Dailies:
     def __init__(self, accounturbator, configurator):
         self.accounturbator = accounturbator
         self.configurator = configurator
-        if configurator['neobots']['randomMethod'].lower() is in ['gauss', 'normal']:
+        if configurator['neobots']['randomMethod'].lower() in ['gauss', 'normal']:
             self.random = random.gauss()
         else:
             self.random = random.uniform()
