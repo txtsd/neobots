@@ -474,7 +474,7 @@ class Dailies:
             self.configurator.dir_logs,
             user,
             method,
-            time
+            time,
         )
         with open(filename, 'wb') as file:
             file.write(html)
