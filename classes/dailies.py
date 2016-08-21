@@ -469,7 +469,7 @@ class Dailies:
 
     def saveHTML(self, method, html):
         user = self.configurator['neopets']['username']
-        time = datetime.strftime(datetime.now(), '%Y_%m_%d')
+        time = datetime.strftime(datetime.now(), '%Y_%m_%d__%H_%M_%S')
         filename = '%s/%s__%s__%s.html' % (
             self.configurator.dir_logs,
             user,
