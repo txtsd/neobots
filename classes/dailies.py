@@ -217,7 +217,85 @@ class Dailies:
         pass
 
     def process_fruitMachine(self):
-        pass
+        result = self.accounturbator.get(
+            '/desert/fruit/index.phtml'
+        )
+        if re.search('come back tomorrow and try again', result.content):
+            print('You\'ve already spun today!')
+            return
+        csrf = re.search('name="ck" value="(.+?)">', result.content).group(1)
+        result = self.accounturbator.post(
+            '/desert/fruit/index.phtml',
+            data={
+                'spin': '1',
+                'ck': csrf,
+            },
+            referer='/desert/fruit/index.phtml'
+        )
+        self.saveHTML('fruitMachine', result.content)
+        if re.search('is not a winning spin', result.content):
+            print('Got nothing.')
+        elif re.search('Paint Brush', result.content) and \
+                re.search('Faerie', result.content):
+            print(
+                '[[random] NP]',
+                '[[random] Paint Brush]',
+                '3x [[random] faerie]',
+                '[STR boost]',
+                '[LVL boost]'
+            )
+        elif re.search('Puntec Fruit', result.content):
+            print(
+                '[2500 NP]',
+                '[Puntec Fruit]'
+            )
+        elif re.search('<b>20[,]?000 NP</b>', result.content):
+            print(
+                '[20000 NP]',
+                '[[random] Battle Muffin]',
+                '[[random] Paint Brush]'
+            )
+        elif re.search('Ptolymelon', result.content):
+            print(
+                '[1000 NP]',
+                '[Ptolymelon]'
+            )
+        elif re.search('Muffin', result.content):
+            print(
+                '[15000 NP]',
+                '[[random] Battle Muffin]'
+            )
+        elif re.search('Cheops Plant', result.content):
+            print(
+                '[750 NP]',
+                '[Cheops Plant]'
+            )
+        elif re.search('<b>5[,]?000 NP</b>', result.content):
+            print(
+                '[5000 NP]',
+                '[[random] petpet]'
+            )
+        elif re.search('Ummagine', result.content):
+            print(
+                '[500 NP]',
+                '[Ummagine]'
+            )
+        elif re.search('<b>2[,]?500 NP</b>', result.content):
+            print('[2500 NP]')
+        elif re.search('Tchea Fruit', result.content):
+            print(
+                '[250 NP]',
+                '[Tchea Fruit]'
+            )
+        elif re.search('<b>1[,]?000 NP</b>', result.content):
+            print('[1000 NP]')
+        elif re.search('Bagguss', result.content):
+            print(
+                '[100 NP]',
+                '[Bagguss]'
+            )
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_giantJelly(self):
         pass
