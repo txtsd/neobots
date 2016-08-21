@@ -5,6 +5,7 @@
 
 from datetime import datetime
 import random
+import re
 
 
 class Dailies:
