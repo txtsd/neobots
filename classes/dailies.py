@@ -217,6 +217,27 @@ class Dailies:
     def process_turmaculus(self):
         pass
 
+    def process_weltrudesToyChest(self):
+        result = self.accounturbator.get(
+            '/petpetpark/daily.phtml'
+            )
+        result = self.accounturbator.post(
+            '/petpetpark/daily.phtml',
+            data={
+                'go': '1',
+            },
+            referer='/petpetpark/daily.phtml'
+            )
+        html = result.content
+        self.saveHTML('weltrudesToyChest', html)
+        item = re.search('type=inventory">(.*)</A></B><BR>', html)
+        if re.search('already collected your prize today', html):
+            print('You\'ve already collected today\'s prize.')
+        elif item:
+            print('[%s]' % item.group(1))
+        else:
+            print('Unforeseen result. Check logs.')
+
     def process_wiseOldKing(self):
         pass
 
