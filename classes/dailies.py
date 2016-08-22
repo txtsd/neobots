@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------
 
 from datetime import datetime
-from urllib3 import parse
+from urllib import parse
 import random
 import re
 
