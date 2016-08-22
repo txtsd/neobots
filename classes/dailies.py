@@ -419,6 +419,39 @@ class Dailies:
     def process_wishingWell(self):
         pass
 
+    # Games
+    def process_potatoCounter(self):
+        result = self.accounturbator.get(
+            '/medieval/potatocounter.phtml'
+        )
+        html = result.content
+        self.saveHTML('potatoCounter', html)
+        # Sneaky bastards
+        htmlfix = re.sub('<!--\s<td(.+?)</td>-->', '', html)
+        counter = 0
+        for x in re.finditer('http://images.neopets.com/medieval/potato1.gif', htmlfix):
+            counter += 1
+        for x in re.finditer('http://images.neopets.com/medieval/potato2.gif', htmlfix):
+            counter += 1
+        for x in re.finditer('http://images.neopets.com/medieval/potato3.gif', htmlfix):
+            counter += 1
+        for x in re.finditer('http://images.neopets.com/medieval/potato4.gif', htmlfix):
+            counter += 1
+        time.sleep(random.gauss(11, 2))
+        result = self.accounturbator.post(
+            '/medieval/potatocounter.phtml',
+            data={
+                'type': 'guess',
+                'guess': str(counter),
+            },
+            referer='/medieval/potatocounter.phtml'
+        )
+        html = result.content
+        if re.search('you win', html):
+            print('Won. Check logs.')
+        else:
+            print('Unforeseen result. Check logs.')
+
     def saveHTML(self, method, html):
         user = self.configurator['neopets']['username']
         time = datetime.strftime(datetime.now(), '%Y_%m_%d__%H_%M_%S')
