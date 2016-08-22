@@ -159,6 +159,11 @@ class Config:
                     ('wishingWell', False),
                 ]
             )),
+            ('games', OrderedDict(
+                [
+                    ('potatoCounter', True),
+                ]
+            )),
         ]
     )
 
