@@ -4,6 +4,7 @@
 # ---------------------------------------------------------------------
 
 from datetime import datetime
+from urllib3 import parse
 import random
 import re
 
@@ -272,6 +273,16 @@ class Dailies:
 
     def process_monotony(self):
         pass
+
+    def process_slime(self):
+        result - self.accounturbator.get(
+            '/games/nickwheel/process_wheel.phtml'
+        )
+        html = result.content
+        self.saveHTML('slime', html)
+        message = re.search('message="(.+?)"></m', html)
+        unquoted = parse.unquote_plus(message)
+        print('[%s]' % unquoted)
 
     # Quests
     def process_brainTree(self):
