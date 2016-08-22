@@ -15,9 +15,9 @@ class Dailies:
         self.accounturbator = accounturbator
         self.configurator = configurator
         if configurator['neobots']['randomMethod'].lower() in ['gauss', 'normal']:
-            self.random = random.gauss()
+            self.random = random.gauss
         else:
-            self.random = random.uniform()
+            self.random = random.uniform
 
     # Freebies
     def process_adventCalendar(self):
