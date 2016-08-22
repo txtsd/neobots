@@ -14,6 +14,7 @@ import os
 class NeoAccount:
 
     domain = 'http://www.neopets.com'
+    images = 'http://images.neopets.com'
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
