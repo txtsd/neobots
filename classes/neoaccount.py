@@ -47,9 +47,13 @@ class NeoAccount:
     def get(self, url, param={}, referer='', head={}):
         if url[0] == '/':
             url = NeoAccount.domain + url
+        elif url[:2] == 'i/':
+            url = NeoAccount.images + url
         if referer != '':
             if referer[0] == '/':
                 referer = NeoAccount.domain + referer
+            elif referer[:2] == 'i/':
+                referer = NeoAccount.images + referer
             head['Referer'] = referer
         result = self.session.get(
             url,
@@ -61,9 +65,13 @@ class NeoAccount:
     def post(self, url, data={}, param={}, referer='', head={}):
         if url[0] == '/':
             url = NeoAccount.domain + url
+        elif url[:2] == 'i/':
+            url = NeoAccount.images + url
         if referer != '':
             if referer[0] == '/':
                 referer = NeoAccount.domain + referer
+            elif referer[:2] == 'i/':
+                referer = NeoAccount.images + referer
             head['Referer'] = referer
         result = self.session.post(
             url,
