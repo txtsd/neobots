@@ -221,14 +221,14 @@ class Dailies:
     def process_weltrudesToyChest(self):
         result = self.accounturbator.get(
             '/petpetpark/daily.phtml'
-            )
+        )
         result = self.accounturbator.post(
             '/petpetpark/daily.phtml',
             data={
                 'go': '1',
             },
             referer='/petpetpark/daily.phtml'
-            )
+        )
         html = result.content
         self.saveHTML('weltrudesToyChest', html)
         item = re.search('type=inventory">(.*)</A></B><BR>', html)
