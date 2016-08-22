@@ -60,10 +60,11 @@ class Dailies:
         result = self.accounturbator.get(
             '/desert/fruit/index.phtml'
         )
-        if re.search('come back tomorrow and try again', result.content):
+        html = result.content
+        if re.search('come back tomorrow and try again', html):
             print('You\'ve already spun today!')
             return
-        csrf = re.search('name="ck" value="(.+?)">', result.content).group(1)
+        csrf = re.search('name="ck" value="(.+?)">', html).group(1)
         result = self.accounturbator.post(
             '/desert/fruit/index.phtml',
             data={
@@ -72,11 +73,12 @@ class Dailies:
             },
             referer='/desert/fruit/index.phtml'
         )
-        self.saveHTML('fruitMachine', result.content)
-        if re.search('is not a winning spin', result.content):
+        html = result.content
+        self.saveHTML('fruitMachine', html)
+        if re.search('is not a winning spin', html):
             print('Got nothing.')
-        elif re.search('Paint Brush', result.content) and \
-                re.search('Faerie', result.content):
+        elif re.search('Paint Brush', html) and \
+                re.search('Faerie', html):
             print(
                 '[[random] NP]',
                 '[[random] Paint Brush]',
@@ -84,52 +86,52 @@ class Dailies:
                 '[STR boost]',
                 '[LVL boost]'
             )
-        elif re.search('Puntec Fruit', result.content):
+        elif re.search('Puntec Fruit', html):
             print(
                 '[2500 NP]',
                 '[Puntec Fruit]'
             )
-        elif re.search('<b>20[,]?000 NP</b>', result.content):
+        elif re.search('<b>20[,]?000 NP</b>', html):
             print(
                 '[20000 NP]',
                 '[[random] Battle Muffin]',
                 '[[random] Paint Brush]'
             )
-        elif re.search('Ptolymelon', result.content):
+        elif re.search('Ptolymelon', html):
             print(
                 '[1000 NP]',
                 '[Ptolymelon]'
             )
-        elif re.search('Muffin', result.content):
+        elif re.search('Muffin', html):
             print(
                 '[15000 NP]',
                 '[[random] Battle Muffin]'
             )
-        elif re.search('Cheops Plant', result.content):
+        elif re.search('Cheops Plant', html):
             print(
                 '[750 NP]',
                 '[Cheops Plant]'
             )
-        elif re.search('<b>5[,]?000 NP</b>', result.content):
+        elif re.search('<b>5[,]?000 NP</b>', html):
             print(
                 '[5000 NP]',
                 '[[random] petpet]'
             )
-        elif re.search('Ummagine', result.content):
+        elif re.search('Ummagine', html):
             print(
                 '[500 NP]',
                 '[Ummagine]'
             )
-        elif re.search('<b>2[,]?500 NP</b>', result.content):
+        elif re.search('<b>2[,]?500 NP</b>', html):
             print('[2500 NP]')
-        elif re.search('Tchea Fruit', result.content):
+        elif re.search('Tchea Fruit', html):
             print(
                 '[250 NP]',
                 '[Tchea Fruit]'
             )
-        elif re.search('<b>1[,]?000 NP</b>', result.content):
+        elif re.search('<b>1[,]?000 NP</b>', html):
             print('[1000 NP]')
-        elif re.search('Bagguss', result.content):
+        elif re.search('Bagguss', html):
             print(
                 '[100 NP]',
                 '[Bagguss]'
