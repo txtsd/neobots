@@ -79,7 +79,29 @@ class Dailies:
         pass
 
     def process_coltzanShrine(self):
-        pass
+        result = self.accounturbator.get(
+            '/desert/shrine.phtml'
+        )
+        html = result.content
+        if re.search('you should wait a while', html):
+            print('You\'ve already been to the shrine today!')
+            return
+        result = self.accounturbator.post(
+            '/desert/shrine.phtml',
+            data={
+                'type': 'approach',
+            },
+            referer='/desert/shrine.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('coltzanShrine', html)
+        levels = re.search('Your pet has gained (\d)+ level', html)
+        if re.search('Awww, nothing happened.', html):
+            print('Got nothing.')
+        elif levels:
+            print('[%s]' % levels.group(0))
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_councilChamber(self):
         pass
