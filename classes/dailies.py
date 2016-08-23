@@ -441,7 +441,27 @@ class Dailies:
         pass
 
     def process_meteor(self):
-        pass
+        result = self.accounturbator.get(
+            '/moon/meteor.phtml'
+        )
+        result = self.accounturbator.get(
+            '/moon/meteor.phtml',
+            params={
+                'getclose': '1',
+            },
+            referer='/moon/meteor.phtml'
+        )
+        result = self.accounturbator.post(
+            '/moon/process_meteor.phtml',
+            data={
+                'pickstep': '1',
+                'meteorsubmit': 'Submit',
+            },
+            referer='/moon/meteor.phtml?getclose=1'
+        )
+        html = result.content
+        self.configurator.saveHTML('meteor', html)
+        print('Unforeseen result. Check logs.')
 
     def process_moltaraQuarry(self):
         pass
