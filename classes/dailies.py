@@ -555,7 +555,30 @@ class Dailies:
         pass
 
     def process_symolHole(self):
-        pass
+        result = self.accounturbator.get(
+            '/medieval/symolhole.phtml'
+        )
+        random = str(random.randrange(0, 5))
+        result = self.accounturbator.post(
+            '/medieval/symolhole.phtml',
+            data={
+                'type': 'goin',
+                'goin': random,
+            },
+            referer='/medieval/symolhole.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('symolHole', html)
+        if re.search('e=[067]', result.url):
+            print('Got nothing.')
+        elif re.search('e=[123]', result.url):
+            print('[Something] Check logs.')
+        elif re.search('e=4', result.url):
+            print('Your petpet gained a level. Check logs.')
+        elif re.search('e=5', result.url):
+            print('[some NP] Check logs.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_tarlasTreasures(self):
         pass
