@@ -464,7 +464,17 @@ class Dailies:
         print('Unforeseen result. Check logs.')
 
     def process_moltaraQuarry(self):
-        pass
+        result = self.accounturbator.get(
+            '/magma/quarry.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('moltaraQuarry', html)
+        if re.search('An angry Shoyru flies over', html):
+            print('You\'ve already collected today\'s Obsidian')
+        elif re.search('Shiny Obsidian', html):
+            print('[Shiny Obsidian]')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_moneyTree(self):
         pass
