@@ -935,7 +935,15 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_haiku(self):
-        pass
+        result = self.accounturbator.get(
+            '/island/haiku/haiku.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('haiku', html)
+        if re.search('You are now eligible to use', html):
+            print('Got the avatar.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_hiddenTower(self):
         pass
