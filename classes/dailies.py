@@ -339,7 +339,45 @@ class Dailies:
         self.configurator.saveHTML('graveDanger', html)
 
     def process_grumpyOldKing(self):
-        pass
+        result = self.accounturbator.get(
+            '/medieval/grumpyking.phtml'
+        )
+        html = result.content
+        if re.search('already told me a joke today', html):
+            print('You\'ve already told a joke today!')
+            return
+        for i in range(2):
+            result = self.accounturbator.post(
+                '/medieval/grumpyking2.phtml',
+                data={
+                    'qp1': 'What',
+                    'qp2': 'do',
+                    'qp3': 'you do if',
+                    'qp4': '',
+                    'qp5': 'fierce',
+                    'qp6': 'Peophins',
+                    'qp7': '',
+                    'qp8': 'has eaten too much',
+                    'qp9': '',
+                    'qp10': 'tin of olives',
+                    'ap1': 'You',
+                    'ap2': 'offering',
+                    'ap3': 'them a',
+                    'ap4': 'tin of',
+                    'ap5': '',
+                    'ap6': 'what what what',
+                    'ap7': '',
+                    'ap8': '',
+                },
+                referer='/medieval/grumpyking.phtml'
+            )
+            html = result.content
+            self.configurator.saveHTML('grumpyOldKing', html)
+            if re.search(
+                    'It looks like your joke had no effect', html):
+                print('Got nothing.')
+            else:
+                print('Unforeseen result. Check logs.')
 
     def process_healingSprings(self):
         pass
