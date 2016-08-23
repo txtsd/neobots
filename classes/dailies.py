@@ -800,7 +800,28 @@ class Dailies:
                 print('Unforeseen result. Check logs.')
 
     def process_buriedTreasure(self):
-        pass
+        random_1 = random.randrange(50, 400)
+        random_2 = random.randrange(50, 400)
+        result = self.accounturbator.get(
+            '/pirates/buriedtreasure/buriedtreasure.phtml?%d,%d' %
+            (random_1, random_2)
+        )
+        html = result.content
+        self.configurator.saveHTML('buriedTreasure', html)
+        if re.search('http://images.neopets.com/pirates/map_blank_scroll.gif', html):
+            print('Got nothing.')
+        elif re.search('http://images.neopets.com/pirates/map_prize1.gif', html):
+            print('[500 NP] Check logs.')
+        elif re.search('http://images.neopets.com/pirates/map_prize6.gif', html):
+            print('[1000-20000 NP] Check logs.')
+        elif re.search('http://images.neopets.com/pirates/map_prize_booby.gif', html):
+            print('[Booby prize] Check logs.')
+        elif re.search('http://images.neopets.com/pirates/map_prize_dub.gif', html):
+            print('[One Dubloon Coin] Check logs.')
+        elif re.search('http://images.neopets.com/pirates/map_prize_jackpot.gif', html):
+            print('[Jackpot] Check logs.')
+        else:
+            print('You\'ve already been here in the last 3 hours!')
 
     def process_cheeseroller(self):
         pass
