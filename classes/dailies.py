@@ -494,7 +494,18 @@ class Dailies:
         pass
 
     def process_qasalanExpellibox(self):
-        pass
+        random = str(random.randrange(1000, 100000))
+        result = self.accounturbator.get(
+            '/games/giveaway/process_giveaway.phtml',
+            params={
+                'r': random,
+            },
+            referer='ncmall.neopets.com/mall/shop.phtml?page=giveaway'
+        )
+        html = result.content
+        parsed = parse.unquote_plus(html)
+        self.configurator.saveHTML('qasalanExpellibox', parsed)
+        print('Unforeseen result. Check logs.')
 
     def process_richSlorg(self):
         pass
