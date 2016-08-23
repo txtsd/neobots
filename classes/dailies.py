@@ -917,7 +917,22 @@ class Dailies:
         pass
 
     def process_guessMarrowWeight(self):
-        pass
+        result = self.accounturbator.get(
+            '/medieval/guessmarrow.phtml'
+        )
+        random = str(random.randrange(201, 800))
+        result = self.accounturbator.post(
+            '/medieval/process_guessmarrow.phtml',
+            data={
+                'guess': random,
+            },
+            referer='/medieval/guessmarrow.phtml'
+        )
+        html = result.content
+        if re.search('WRONG', html):
+            print('Got nothing.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_haiku(self):
         pass
