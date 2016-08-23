@@ -402,7 +402,40 @@ class Dailies:
         pass
 
     def process_lunarTemple(self):
-        pass
+        # choice[phase]
+        choice = [8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+        result = self.accounturbator.get(
+            '/shenkuu/lunar/'
+        )
+        html = result.content
+        self.configurator.saveHTML('lunarTemple', html)
+        if re.search('You may only attempt my challenge once per day', html):
+            print('You\'ve already attempted the puzzle today.')
+            return
+        result = self.accounturbator.get(
+            '/shenkuu/lunar/',
+            params={
+                'show': 'puzzle'
+            },
+            referer='/shenkuu/lunar/'
+        )
+        html = result.content
+        self.configurator.saveHTML('lunarTemple', html)
+        angle = re.search('&angleKreludor=(\d+?)&viewID=', html)
+        angle_final = math.ceil(float(angle))
+        phase = int(round(angle / 22.5))
+        phase_choice = str(choice[phase])
+        result = self.accounturbator.post(
+            '/shenkuu/lunar/results.phtml',
+            data={
+                'submitted': 'false',
+                'phase_choice': phase_choice,
+            },
+            referer='/shenkuu/lunar/?show=puzzle'
+        )
+        html = result.content
+        self.configurator.saveHTML('lunarTemple', html)
+        print('Unforeseen result. Check logs.')
 
     def process_magmaPool(self):
         pass
