@@ -169,7 +169,25 @@ class Dailies:
         pass
 
     def process_forgottenShore(self):
-        pass
+        result = self.accounturbator.get(
+            '/pirates/forgottenshore.phtml'
+        )
+        html = result.content
+        if re.search('Located about 80 miles south of Mystery Island', html):
+            print('No access to the Forgotten Shore yet.')
+            return
+        csrf = re.search('?confirm=1&_ref_ck=(.+?)\'><', html)
+        result = self.accounturbator.get(
+            '/pirates/forgottenshore.phtml',
+            data={
+                'confirm': '1',
+                '_ref_ck': csrf.group(1),
+            },
+            referer='/pirates/forgottenshore.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('forgottenShore', html)
+        print('Unforeseen result. Check logs.')
 
     def process_fruitMachine(self):
         result = self.accounturbator.get(
