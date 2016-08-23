@@ -310,7 +310,33 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_graveDanger(self):
-        pass
+        # Do not use until pets can be shuffled
+        result = self.accounturbator.get(
+            '/halloween/gravedanger/index.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('graveDanger', html)
+        if re.search('Your Petpet has returned', html):
+            result = self.accounturbator.post(
+                '/halloween/gravedanger/index.phtml',
+                data={
+                    'again': '1',
+                },
+                referer='/halloween/gravedanger/index.phtml'
+            )
+            html = result.content
+            self.configurator.saveHTML('graveDanger', html)
+        active_pet = re.search('href="/quickref.phtml"><b>(.+?)</b></a>', html)
+        result = self.accounturbator.post(
+            '/halloween/gravedanger/index.phtml',
+            data={
+                'neopet': active_pet,
+                'equipped': '0',
+            },
+            referer='/halloween/gravedanger/index.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('graveDanger', html)
 
     def process_grumpyOldKing(self):
         pass
