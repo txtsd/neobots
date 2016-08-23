@@ -432,7 +432,12 @@ class Dailies:
         counter = 0
         potato = 'http://images.neopets.com/medieval/potato%d.gif'
         potato_re = '(%s)|(%s)|(%s)|(%s)' % \
-            (potato % 1, potato % 2, potato % 3, potato % 4)
+            (
+                potato % 1,
+                potato % 2,
+                potato % 3,
+                potato % 4
+            )
         for x in re.finditer(potato_re, htmlfix):
             counter += 1
         time.sleep(random.gauss(11, 2))
