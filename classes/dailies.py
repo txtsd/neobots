@@ -681,7 +681,20 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_yeOldFishingVortex(self):
-        pass
+        result = self.accounturbator.get(
+            '/water/fishing.phtml'
+        )
+        # Handle fishing for all pets instead of just one
+        result = self.accounturbator.post(
+            '/water/fishing.phtml',
+            data={
+                'go_fish': '1',
+            },
+            referer='/water/fishing.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('yeOldFishingVortex', html)
+        print('Unforeseen result.  Check logs.')
 
     # Scratchcards
     def process_desert(self):
