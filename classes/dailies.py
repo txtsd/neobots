@@ -430,13 +430,10 @@ class Dailies:
         # Sneaky bastards
         htmlfix = re.sub('<!--\s<td(.+?)</td>-->', '', html)
         counter = 0
-        for x in re.finditer('http://images.neopets.com/medieval/potato1.gif', htmlfix):
-            counter += 1
-        for x in re.finditer('http://images.neopets.com/medieval/potato2.gif', htmlfix):
-            counter += 1
-        for x in re.finditer('http://images.neopets.com/medieval/potato3.gif', htmlfix):
-            counter += 1
-        for x in re.finditer('http://images.neopets.com/medieval/potato4.gif', htmlfix):
+        potato = 'http://images.neopets.com/medieval/potato%d.gif'
+        potato_re = '(%s)|(%s)|(%s)|(%s)' % \
+            (potato % 1, potato % 2, potato % 3, potato % 4)
+        for x in re.finditer(potato_re, htmlfix):
             counter += 1
         time.sleep(random.gauss(11, 2))
         result = self.accounturbator.post(
