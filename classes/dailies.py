@@ -527,7 +527,26 @@ class Dailies:
         pass
 
     def process_snowager(self):
-        pass
+        result = self.accounturbator.get(
+            '/winter/snowager.phtml'
+        )
+        if re.search('The snowager is awake', html):
+            print('Snowager is awake.')
+            return
+        result = self.accounturbator.get(
+            '/winter/snowager2.phtml',
+            referer='/winter/snowager.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('snowager', html)
+        item = re.search('pick up a (?:cool )?(.+) from the', html)
+        outcome = re.search('rears up and fires', html)
+        if item:
+            print('[%s]' % item.group(1))
+        elif outcome:
+            print('You got attacked. Check logs.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_soupKitchen(self):
         pass
