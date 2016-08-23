@@ -508,7 +508,17 @@ class Dailies:
         print('Unforeseen result. Check logs.')
 
     def process_richSlorg(self):
-        pass
+        result = self.accounturbator.get(
+            '/shop_of_offers.phtml',
+            params={
+                'slorg_payout': 'yes',
+            }
+        )
+        html = result.content
+        self.configurator.saveHTML('richSlorg', html)
+        item = re.search('You have received <strong>([\d,]+?)</strong>')
+        if item:
+            print('[%s NP]' % item.group(1))
 
     def process_rubbishDump(self):
         pass
