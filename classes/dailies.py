@@ -584,7 +584,26 @@ class Dailies:
         pass
 
     def process_tdmbgpop(self):
-        pass
+        result = self.accounturbator.get(
+            '/faerieland/tdmbgpop.phtml'
+        )
+        html = result.content
+        if re.search('appreciates your attention', html):
+            print('You\'ve already been here today.')
+            return
+        result = self.accounturbator.post(
+            '/faerieland/tdmbgpop.phtml',
+            data={
+                'talkto': '1',
+            },
+            referer='/faerieland/tdmbgpop.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('tdmbgpop', html)
+        if re.search('but nothing seems to happen.', html):
+            print('Got nothing.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_tombola(self):
         pass
