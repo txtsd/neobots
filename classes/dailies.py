@@ -949,7 +949,15 @@ class Dailies:
         pass
 
     def process_islandMystic(self):
-        pass
+        result = self.accounturbator.get(
+            '/island/mystichut.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('islandMystic', html)
+        if re.search('You are now eligible to use', html):
+            print('Got the avatar.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_labRay(self):
         pass
