@@ -25,7 +25,29 @@ class Dailies:
         pass
 
     def process_anchorManagement(self):
-        pass
+        result = self.accounturbator.get(
+            '/pirates/anchormanagement.phtml'
+        )
+        html = result.content
+        if re.search('already done your share', html):
+            print('You\'ve already cannonballed today!')
+            return
+        # 'type="hidden" value="(.+?)">(?:\s)*?</form>'
+        csrf = re.search('type="hidden" value="(.+?)"></form>', html).group(1)
+        result = self.accounturbator.post(
+            '/pirates/anchormanagement.phtml',
+            data={
+                'action': csrf,
+            },
+            referer='/pirates/anchormanagement.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('anchorManagement', html)
+        item = re.search('class="prize-item-name">(.+?)</span>', html)
+        if item:
+            print('[%s]' % item.group(1))
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_appleBobbing(self):
         pass
