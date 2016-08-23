@@ -827,7 +827,32 @@ class Dailies:
         pass
 
     def process_coconutShy(self):
-        pass
+        result = self.accounturbator.get(
+            'halloween/coconutshy.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('coconutShy', html)
+        while True:
+            random = str(random.randrange(70083, 79083))
+            result = self.accounturbator.get(
+                '/halloween/process_cocoshy.phtml',
+                params={
+                    'coconut': '1',
+                    'r': random,
+                },
+                referer='halloween/coconutshy.phtml'
+            )
+            html = result.content
+            unquoted = parse.unquote_plus(html)
+            self.configurator.saveHTML('coconutShy', html)
+            if re.search('No more throws', unquoted):
+                print('No more throws. Check logs.')
+                return
+            elif re.search('No Neopoints', unquoted):
+                print('No neopoints. Possible throws remaining. Check logs.')
+                return
+            else:
+                print('Unforeseen result. Check logs.')
 
     def process_corkGunGallery(self):
         pass
