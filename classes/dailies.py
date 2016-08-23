@@ -140,7 +140,30 @@ class Dailies:
         pass
 
     def process_desertedTomb(self):
-        pass
+        result = self.accounturbator.get(
+            '/worlds/geraptiku/tomb.phtml'
+        )
+        # Check if there's an intermediate POST here
+        result = self.accounturbator.get(
+            '/worlds/geraptiku/process_tomb.phtml',
+            referer='/worlds/geraptiku/tomb.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('desertedTomb', html)
+        if re.search('had enough excitement for one day', html):
+            print('You\'ve already visited the tomb today!')
+        elif re.search('After being lost in the tomb for two', html):
+            print('Got nothing.')
+        elif re.search('You happen upon a flight of stairs that leads', html):
+            print('Got nothing.')
+        elif re.search('never seen so many traps in', html):
+            print('Your pet loses some HP. Check logs.')
+        elif re.search('passed that same carving at least', html):
+            print('You got a prize and possibly the avatar. Check logs.')
+        elif re.search('Your mum would be proud', html):
+            print('You got a prize and possibly the avatar. Check logs.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_faerieCrossword(self):
         pass
