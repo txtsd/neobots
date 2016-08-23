@@ -606,7 +606,24 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_tombola(self):
-        pass
+        result = self.accounturbator.get(
+            '/island/tombola.phtml'
+        )
+        html = result.content
+        if re.search('Back in an hour', html):
+            print('Try again in an hour. Check logs.')
+            return
+        result = self.accounturbator.get(
+            '/island/tombola2.phtml',
+            referer='/island/tombola.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('tombola', html)
+        item = re.search('<b>Your Prize - (.*)</b><center>', html)
+        if item:
+            print('[%s]' % item.group(1))
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_trudySurprise(self):
         pass
