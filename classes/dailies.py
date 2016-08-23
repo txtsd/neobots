@@ -768,7 +768,36 @@ class Dailies:
         pass
 
     def process_bagatelle(self):
-        pass
+        result = self.accounturbator.get(
+            '/halloween/bagatelle.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('bagatelle', html)
+        while True:
+            random = str(random.randrange(10083, 49083))
+            result = self.accounturbator.get(
+                '/halloween/process_bagatelle.phtml',
+                params={
+                    'r': random,
+                },
+                referer='/halloween/bagatelle.phtml'
+            )
+            html = result.content
+            unquoted = parse.unquote_plus(html)
+            self.configurator.saveHTML('bagatelle', html)
+            NP = re.search('ints=(\d+?)', unquoted)
+            if re.search('We have a loser', unquoted):
+                print('Got nothing.')
+            elif NP:
+                print('[%s]' % NP.group(1))
+            elif re.search('afford to play', unquoted):
+                print('No neopoints. Check logs.')
+                return
+            elif re.search('let somebody else', unquoted):
+                print('No more remaining. Check logs.')
+                return
+            else:
+                print('Unforeseen result. Check logs.')
 
     def process_buriedTreasure(self):
         pass
