@@ -296,7 +296,18 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_giantOmelette(self):
-        pass
+        result = self.accounturbator.get(
+            '/prehistoric/omelette.phtml',
+            params={
+                'type': 'get_omelette'
+            }
+        )
+        html = result.content
+        self.configurator.saveHTML('giantOmellete', html)
+        if re.search('more than one slice per day'):
+            print('You\'ve already taken a slice today.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_graveDanger(self):
         pass
