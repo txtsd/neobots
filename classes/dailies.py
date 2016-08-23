@@ -273,7 +273,27 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_giantJelly(self):
-        pass
+        result = self.accounturbator.get(
+            '/jelly/jelly.phtml'
+        )
+        html = result.content
+        if re.search('cannot take more than one', html):
+            print('You\'ve already taken a jelly today!')
+            return
+        result = self.accounturbator.get(
+            '/jelly/jelly.phtml',
+            params={
+                'type': 'get_jelly',
+            },
+            referer='/jelly/jelly.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('giantJelly', html)
+        item = re.search('some <b>(.+?)</b>!', html)
+        if item:
+            print('[%s]' % item.group(1))
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_giantOmelette(self):
         pass
