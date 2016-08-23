@@ -3,8 +3,6 @@
 # ------------------------------txtsd----------------------------------
 # ---------------------------------------------------------------------
 
-"""Handles the account, login, and connections"""
-
 import requests
 import pickle
 import re
@@ -12,6 +10,7 @@ import os
 
 
 class NeoAccount:
+    """Handles the account, login, and connections"""
 
     domain = 'http://www.neopets.com'
     images = 'http://images.neopets.com'

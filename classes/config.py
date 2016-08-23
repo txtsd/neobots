@@ -3,8 +3,6 @@
 # ------------------------------txtsd----------------------------------
 # ---------------------------------------------------------------------
 
-"""Handles the configuration file"""
-
 from collections import OrderedDict
 from datetime import datetime
 import json
@@ -13,6 +11,7 @@ import os
 
 
 class Config:
+    """Handles the configuration file"""
 
     dir_data = 'data'
     dir_logs = 'logs'

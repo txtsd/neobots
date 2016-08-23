@@ -10,6 +10,7 @@ import re
 
 
 class Dailies:
+    """Handles the dailies"""
 
     def __init__(self, accounturbator, configurator):
         self.accounturbator = accounturbator
