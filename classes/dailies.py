@@ -380,7 +380,23 @@ class Dailies:
                 print('Unforeseen result. Check logs.')
 
     def process_healingSprings(self):
-        pass
+        result = self.accounturbator.get(
+            '/faerieland/springs.phtml'
+        )
+        html = result.content
+        if re.search('My magic is not fully restored yet', html):
+            print('You\'ve been here in the past 30 minutes.')
+            return
+        result = self.accounturbator.get(
+            '/faerieland/springs.phtml',
+            params={
+                'type': 'heal',
+            },
+            referer='/faerieland/springs.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('healingSprings', html)
+        print('Unforeseen result. Check logs.')
 
     def process_kikoPop(self):
         pass
