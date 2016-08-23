@@ -104,7 +104,31 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_councilChamber(self):
-        pass
+        result = self.accounturbator.get(
+            '/altador/council.phtml'
+        )
+        html = result.content
+        if re.search('is a monument to the great legends of Altador', html):
+            print('You have not completed the Altador Plot yet.')
+            return
+        csrf = re.search('prhv=(.+?)"></MAP>')
+        result = self.accounturbator.post(
+            '/altador/council.phtml',
+            data={
+                'prhv': csrf.group(1),
+                'collect': '1',
+            },
+            referer='/altador/council.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('councilChamber', html)
+        item = re.search('<BR><B>(.+?)</B></DIV>', html)
+        if item:
+            print('[%s]' % item.group(1))
+        elif re.search('King Altador frowns at you as you enter', html):
+            print('You\'ve already collected today\'s prize.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_dailyPuzzle(self):
         pass
