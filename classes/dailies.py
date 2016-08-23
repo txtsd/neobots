@@ -653,7 +653,32 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_wiseOldKing(self):
-        pass
+        result = self.accounturbator.get(
+            '/medieval/wiseking.phtml'
+        )
+        html = result.content
+        if re.search('It seems you have already', html):
+            print('You\'ve already told a joke today!')
+            return
+        result = self.accounturbator.post(
+            '/medieval/process_wiseking.phtml',
+            data={
+                'qp1': 'One should never assume that',
+                'qp2': 'beauty',
+                'qp3': 'is comparable to',
+                'qp4': 'the courage of',
+                'qp5': 'an',
+                'qp6': 'coconut',
+                'qp7': 'Baby Fireball',
+            },
+            referer='/medieval/wiseking.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('wiseOldKing', html)
+        if re.search('That didn\'t make any sense at all.', html):
+            print('Got nothing.')
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_yeOldFishingVortex(self):
         pass
