@@ -480,7 +480,12 @@ class Dailies:
         pass
 
     def process_monthlyFreebies(self):
-        pass
+        result = self.accounturbator.get(
+            '/freebies/'
+        )
+        html = result.content
+        self.configurator.saveHTML('monthlyFreebies', html)
+        print('Unforeseen result. Check logs.')
 
     def process_movieCentral(self):
         pass
