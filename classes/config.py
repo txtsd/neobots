@@ -6,6 +6,7 @@
 """Handles the configuration file"""
 
 from collections import OrderedDict
+from datetime import datetime
 import json
 import sys
 import os
@@ -239,6 +240,18 @@ class Config:
             ) as file:
                 file.write(Config.DEFAULT_ACCOUNTS)
             Config._advice_exit()
+
+    def saveHTML(self, method, html):
+        user = self.configurator['neopets']['username']
+        time = datetime.strftime(datetime.now(), '%Y_%m_%d__%H_%M_%S')
+        filename = '%s/%s__%s__%s.html' % (
+            self.configurator.dir_logs,
+            user,
+            method,
+            time,
+        )
+        with open(filename, 'wb') as file:
+            file.write(html)
 
     def _create_config(self):
         with open(Config.file_config, 'w') as file:

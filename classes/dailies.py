@@ -3,7 +3,6 @@
 # ------------------------------txtsd----------------------------------
 # ---------------------------------------------------------------------
 
-from datetime import datetime
 from urllib import parse
 import random
 import time
@@ -75,7 +74,7 @@ class Dailies:
             referer='/desert/fruit/index.phtml'
         )
         html = result.content
-        self.saveHTML('fruitMachine', html)
+        self.configurator.saveHTML('fruitMachine', html)
         if re.search('is not a winning spin', html):
             print('Got nothing.')
         elif re.search('Paint Brush', html) and \
@@ -233,7 +232,7 @@ class Dailies:
             referer='/petpetpark/daily.phtml'
         )
         html = result.content
-        self.saveHTML('weltrudesToyChest', html)
+        self.configurator.saveHTML('weltrudesToyChest', html)
         item = re.search('type=inventory">(.*)</A></B><BR>', html)
         if re.search('already collected your prize today', html):
             print('You\'ve already collected today\'s prize.')
@@ -282,7 +281,7 @@ class Dailies:
             '/games/nickwheel/process_wheel.phtml'
         )
         html = result.content
-        self.saveHTML('slime', html)
+        self.configurator.saveHTML('slime', html)
         message = re.search('message="(.+?)"></m', html)
         unquoted = parse.unquote_plus(message)
         print('[%s]' % unquoted)
@@ -426,7 +425,7 @@ class Dailies:
             '/medieval/potatocounter.phtml'
         )
         html = result.content
-        self.saveHTML('potatoCounter', html)
+        self.configurator.saveHTML('potatoCounter', html)
         # Sneaky bastards
         htmlfix = re.sub('<!--\s<td(.+?)</td>-->', '', html)
         counter = 0
@@ -454,15 +453,3 @@ class Dailies:
             print('Won. Check logs.')
         else:
             print('Unforeseen result. Check logs.')
-
-    def saveHTML(self, method, html):
-        user = self.configurator['neopets']['username']
-        time = datetime.strftime(datetime.now(), '%Y_%m_%d__%H_%M_%S')
-        filename = '%s/%s__%s__%s.html' % (
-            self.configurator.dir_logs,
-            user,
-            method,
-            time,
-        )
-        with open(filename, 'wb') as file:
-            file.write(html)
