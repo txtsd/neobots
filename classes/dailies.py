@@ -50,7 +50,30 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_appleBobbing(self):
-        pass
+        result = self.accounturbator.get(
+            '/halloween/applebobbing.phtml'
+        )
+        html = result.content
+        if re.search('Think I\'m blind underneath', html):
+            print('You\'ve already bobed today.')
+            return
+        result = self.accounturbator.get(
+            '/halloween/applebobbing.phtml',
+            params={
+                'bobbing': '1',
+            },
+            referer='/halloween/applebobbing.phtml'
+        )
+        html = result.content
+        self.configurator.saveHTML('appleBobbing', html)
+        item = re.search(
+            'bob_middle\'>[\S\s]*<br><b>(.+?)</b></center><br>[\S\s]*<div id=\'bob_bottom', html)
+        if re.search('decide to skip bobbing', html):
+            print('Got nothing.')
+        elif item:
+            print('[%s]' % item.group(1))
+        else:
+            print('Unforeseen result. Check logs.')
 
     def process_bankInterest(self):
         pass
