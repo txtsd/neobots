@@ -44,8 +44,11 @@ class Dailies:
         html = result.content
         self.configurator.saveHTML('anchorManagement', html)
         item = re.search('class="prize-item-name">(.+?)</span>', html)
+        lost_item = re.search('Oh no! Not your (.+?).</div>', html)
         if item:
             print('[%s]' % item.group(1))
+        elif lost_item:
+            print('Lost [%s]' % lost_item.group(1))
         else:
             print('Unforeseen result. Check logs.')
 
