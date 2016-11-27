@@ -79,7 +79,21 @@ class Dailies:
             print('Unforeseen result. Check logs.')
 
     def process_bankInterest(self):
-        pass
+        result = self.accounturbator.get(
+            '/bank.phtml'
+        )
+        html = result.content
+        if re.search('You have already collected your interest today', html):
+            print('You\'ve already collected today\'s interest.')
+            return
+        result = self.accounturbator.post(
+            '/process_bank.phtml',
+            data={
+                'type': 'interest',
+            },
+            referer='/bank.phtml'
+        )
+        print('Collected interest.')
 
     def process_coltzanShrine(self):
         result = self.accounturbator.get(
