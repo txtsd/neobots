@@ -1,4 +1,4 @@
-![neobots] (http://i.imgur.com/1FSmg4P.png)
+![neobots](http://i.imgur.com/1FSmg4P.png)
 
 #### Bot Logic:
 * If you haven't run habitarium before, the bot will buy buildings and reset your habitarium repeatedly until it has enough (items don't reset)
