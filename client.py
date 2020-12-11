@@ -37,6 +37,6 @@ if account.login():
     # Start daily freebies
     freebies = Freebies(account)
     freebies.doTrudy()
-    # freebies.doSnowager()
-    # freebies.doAnchor()
-    # freebies.doAppleBobbing()
+    freebies.doSnowager()
+    freebies.doAnchor()
+    freebies.doAppleBobbing()
