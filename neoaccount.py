@@ -91,6 +91,7 @@ class NeoAccount:
 
     # Login
     def login(self):
+        self.logger.debug(account.username + ': Logging in')
         result = self.get('http://www.neopets.com/index.phtml')
         match = re.search(
             'Welcome, <a href="/userlookup\.phtml\?user=(?P<username>.+?)">',

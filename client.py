@@ -33,11 +33,10 @@ config = configs['account'][0]
 
 # Login to the first account
 account = NeoAccount(config)
-logger.debug(account.username + ': Logging in')
 if account.login():
     # Start daily freebies
     freebies = Freebies(account)
     freebies.doTrudy()
-    freebies.doSnowager()
-    freebies.doAnchor()
-    freebies.doAppleBobbing()
+    # freebies.doSnowager()
+    # freebies.doAnchor()
+    # freebies.doAppleBobbing()
