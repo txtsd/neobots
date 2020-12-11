@@ -4,6 +4,7 @@ import time
 import logging
 from datetime import date
 from pathlib import Path
+from bs4 import BeautifulSoup as bs
 
 
 class Freebies:
@@ -17,6 +18,28 @@ class Freebies:
         # Create debug directory
         self.debugOutput = Path(self.pathString)
         self.debugOutput.mkdir(exist_ok=True)
+
+        # Links
+        self.LINK_INDEX = '/index.html'
+        self.LINK_TRUDY_1 = '/trudys_surprise.phtml'
+        self.LINK_TRUDY_2 = '/trudydaily/slotgame.phtml'
+        self.LINK_TRUDY_3 = '/trudydaily/js/slotsgame.js'
+        self.LINK_TRUDY_4 = '/trudydaily/ajax/claimprize.php'
+        self.LINK_EVENTS = '/allevents.phtml'
+
+        # Params
+        self.PARAMS_TRUDY = {'delevent': 'yes'}
+
+        # POST Data
+        self.DATA_TRUDY_1 = {'action': 'beginroll'}
+        self.DATA_TRUDY_2 = {'action': 'prizeclaimed'}
+
+        # Search texts
+        self.TEXT_TRUDY = "Trudy's Surprise"
+
+        # Regexes
+        self.PATTERN_TRUDY_1 = re.compile(r'(?P<link>/trudydaily/slotgame\.phtml\?id=(?P<id>.*?)&slt=(?P<slt>\d+))')
+        self.PATTERN_TRUDY_2 = re.compile(r'(?P<link>/trudydaily/js/slotsgame\.js\?v=(?P<v>\d+))')
 
     def save(self, reply, name, JSON=False):
         timeNow = time.time_ns()
@@ -33,70 +56,84 @@ class Freebies:
             f.write(reply.content)
 
     def doTrudy(self):
-        # Links
-        linkTrudy = '/trudys_surprise.phtml'
-
-        # Regexes
-        patternTrudy1 = re.compile("Trudy's Surprise has reset and is waiting for you!")
-        patternTrudy2 = re.compile('(?P<link>/trudydaily/slotgame\.phtml\?id=(?P<id>.*?)&slt=(?P<slt>\d+))')
-        patternTrudy3 = re.compile('(?P<link>/trudydaily/js/slotsgame\.js\?v=(?P<v>\d+))')
-
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Trudy')
 
-        # Get inbox
-        result1 = self.account.get('/allevents.phtml', referer='/index.html')
+        # Look for Trudy's Surprise event notfif at top of page
+        result1 = self.account.get(self.LINK_INDEX)
+        soup1 = bs(result1.content, 'lxml')
+        soup1_match = soup1.select_one('#neobdy.en div#main div#header table tr td.eventIcon.sf b')
 
-        # Check inbox for Trudy's daily
-        if patternTrudy1.search(result1.text):
-            result2 = self.account.get(linkTrudy, referer='/allevents.phtml')
-            matchTrudy2 = patternTrudy2.search(result2.text)
+        # If event exists
+        if soup1_match and (soup1_match.get_text() == self.TEXT_TRUDY):
+            result2 = self.account.get(
+                self.LINK_TRUDY_1,
+                params=self.PARAMS_TRUDY,
+                referer=self.LINK_INDEX
+            )
+            soup2 = bs(result2.content, 'lxml')
+            soup2_match = soup2.select_one('#frameTest')
 
-            # Double check for Trudy availability
-            if matchTrudy2:
-                result3 = self.account.get(matchTrudy2['link'], referer=linkTrudy)
-                matchTrudy3 = patternTrudy3.search(result3.text)
+            # Check for trudy game link
+            if soup2_match:
+                soup2_regexmatch = self.PATTERN_TRUDY_1.search(soup2_match.get('src'))
+                result3 = self.account.get(
+                    self.LINK_TRUDY_2,
+                    params={
+                        'id': soup2_regexmatch['id'],
+                        'slt': soup2_regexmatch['slt']
+                    },
+                    referer=self.LINK_TRUDY_1
+                )
+                soup3 = bs(result3.content, 'lxml')
+                soup3_matches = soup3.select('script')
+                # Select the second script element which has the link we need
+                soup3_match = soup3_matches[1]
 
                 # Check for slotsgame link
-                if matchTrudy3:
-                    result4 = self.account.get(matchTrudy3['link'], referer=matchTrudy2['link'])
+                if soup3_match:
+                    soup3_regexmatch = self.PATTERN_TRUDY_2.search(soup3_match.get('src'))
+                    result4 = self.account.get(
+                        self.LINK_TRUDY_3,
+                        params={
+                            'v': soup3_regexmatch['v'],
+                        },
+                        referer=soup2_regexmatch['link']
+                    )
 
                     # Start POSTing
                     result5 = self.account.xhr(
-                        '/trudydaily/ajax/claimprize.php',
+                        self.LINK_TRUDY_4,
                         data={
                             'action': 'getslotstate',
-                            'key': matchTrudy2['id']
+                            'key': soup2_regexmatch['id']
                         },
-                        referer=linkTrudy
+                        referer=self.LINK_TRUDY_1
                     )
                     self.save(result5, 'trudy_getslotstate', JSON=True)
-                    json5 = json.loads(result5.text)
+                    json5 = result5.json()
                     if not json5['error']:
                         time.sleep(5)
+                        # Next POST
                         result6 = self.account.xhr(
-                            '/trudydaily/ajax/claimprize.php',
-                            data={
-                                'action': 'beginroll'
-                            },
-                            referer=linkTrudy
+                            self.LINK_TRUDY_4,
+                            data=self.DATA_TRUDY_1,
+                            referer=self.LINK_TRUDY_1
                         )
                         self.save(result6, 'trudy_beginroll', JSON=True)
-                        json6 = json.loads(result6.text)
+                        json6 = result6.json()
                         if not json6['error']:
                             # Prize has been won
                             # Display before clicking the modal
                             logger.info(json6['prizes'])
                             result7 = self.account.xhr(
-                                '/trudydaily/ajax/claimprize.php',
-                                data={
-                                    'action': 'prizeclaimed'
-                                },
-                                referer=linkTrudy
+                                self.LINK_TRUDY_4,
+                                data=self.DATA_TRUDY_2,
+                                referer=self.LINK_TRUDY_1
                             )
-                            json7 = json.loads(result7.text)
+                            json7 = result7.json()
                             if not json7['error']:
-                                result8 = self.account.get(linkTrudy, referer=linkTrudy)
+                                result8 = self.account.get(self.LINK_TRUDY_1, referer=self.LINK_TRUDY_1)
                             else:
                                 logger.error(json7['error'])
                         else:
@@ -104,11 +141,11 @@ class Freebies:
                     else:
                         logger.error(json5['error'])
                 else:
-                    logger.error('No slotsgame.js version string')
+                    logger.error('No slotsgame.js link')
             else:
-                logger.error('No slotgame id')
+                logger.error('No slotgame link')
         else:
-            logger.info("Trudy's Surprise has already been played today!")
+            logger.info("No Trudy's Surprise notification")
 
     def doSnowager(self):
         # Links
