@@ -1,8 +1,8 @@
 import requests
 import pickle
 import logging
-import re
 from pathlib import Path
+from bs4 import BeautifulSoup as bs
 
 
 class NeoAccount:
@@ -93,13 +93,11 @@ class NeoAccount:
     def login(self):
         self.logger.debug(self.username + ': Logging in')
         result = self.get('http://www.neopets.com/index.phtml')
-        match = re.search(
-            r'Welcome, <a href="/userlookup.phtml?user=(?P<username>.+?)">',
-            result.text)
-        if match:
-            if match['username'] == self.username:
-                self.logger.info(self.username + ': Already logged in!')
-                return True
+        soup = bs(result.content, 'lxml')
+        match = soup.select_one('.user.medText a')
+        if match and match.get_text() == self.username:
+            self.logger.info(self.username + ': Already logged in!')
+            return True
         result = self.get(
             'http://www.neopets.com/login/',
             referer='/index.phtml'
