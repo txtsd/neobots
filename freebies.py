@@ -26,6 +26,8 @@ class Freebies:
         self.LINK_TRUDY_2 = '/trudydaily/slotgame.phtml'
         self.LINK_TRUDY_3 = '/trudydaily/js/slotsgame.js'
         self.LINK_TRUDY_4 = '/trudydaily/ajax/claimprize.php'
+        self.LINK_SNOWAGER_1 = '/winter/snowager.phtml'
+        self.LINK_SNOWAGER_2 = '/winter/snowager2.phtml'
 
         # Params
         self.PARAMS_TRUDY = {'delevent': 'yes'}
@@ -36,10 +38,19 @@ class Freebies:
 
         # Search texts
         self.TEXT_TRUDY = "Trudy's Surprise"
+        self.TEXT_SNOWAGER = 'Attempt to steal a piece of treasure'
 
         # Regexes
         self.PATTERN_TRUDY_1 = re.compile(r'(?P<link>/trudydaily/slotgame\.phtml\?id=(?P<id>.*?)&slt=(?P<slt>\d+))')
         self.PATTERN_TRUDY_2 = re.compile(r'(?P<link>/trudydaily/js/slotsgame\.js\?v=(?P<v>\d+))')
+        self.PATTERN_SNOWAGER_1 = re.compile(r'You carefully walk in and pick up a')
+        self.PATTERN_SNOWAGER_2 = re.compile(r'You carefully walk in and hastily pick up an item')
+        self.PATTERN_SNOWAGER_3 = re.compile(r'You have already collected your prize today.')
+        self.PATTERN_SNOWAGER_4 = re.compile(r'Come back later.')
+        self.PATTERN_SNOWAGER_5 = re.compile(r'The Snowager is awake')
+        self.PATTERN_SNOWAGER_6 = re.compile(r'The Snowager moves slightly in its sleep')
+        self.PATTERN_SNOWAGER_7 = re.compile(r'The Snowager awakes, looks straight at you')
+        self.PATTERN_SNOWAGER_8 = re.compile(r'ROOOOAARRR')
 
     def save(self, reply, name, JSON=False):
         timeNow = time.time_ns()
@@ -148,49 +159,39 @@ class Freebies:
             logger.info("No Trudy's Surprise notification")
 
     def doSnowager(self):
-        # Links
-        linkSnowager1 = '/winter/snowager.phtml'
-        linkSnowager2 = '/winter/snowager2.phtml'
-        linkSnowager3 = '/winter/icecaves.phtml'
-
-        # Regexes
-        patternSnowager1 = re.compile('The Snowager is currently sleeping\.\.\.')
-        patternSnowager2 = re.compile('Come back later\.')
-        patternSnowager3 = re.compile('You have already collected your prize today')
-        patternSnowager4 = re.compile('NEW BATTLEDOME CHALLENGER')
-        patternSnowager5 = re.compile('The snowager rears up and fires a')
-        patternSnowager6 = re.compile('The Snowager is awake')
-        patternSnowager7 = re.compile('The Snowager moves slightly in its sleep')
-        patternSnowager8 = re.compile('The Snowager is awake')
-
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Snowager')
 
         # Visit snowager page
-        result1 = self.account.get(linkSnowager1)
-        matchSnowager1 = patternSnowager1.search(result1.text)
+        result1 = self.account.get(self.LINK_SNOWAGER_1)
+        soup1 = bs(result1.content, 'lxml')
+        soup1_match = soup1.select_one('.content center form input')
 
         # Probe snowager
-        if matchSnowager1:
-            result2 = self.account.get(linkSnowager2, referer=linkSnowager1)
+        if soup1_match and soup1_match.get('value') == self.TEXT_SNOWAGER:
+            result2 = self.account.get(self.LINK_SNOWAGER_2, referer=self.LINK_SNOWAGER_1)
             self.save(result2, 'snowager')
-
-            # Check for rewards, battledome challenger, and getting attacked
-            matchSnowager2 = patternSnowager2.search(result2.text)
-            matchSnowager3 = patternSnowager3.search(result2.text)
-            matchSnowager4 = patternSnowager4.search(result2.text)
-            matchSnowager5 = patternSnowager5.search(result2.text)
-            matchSnowager6 = patternSnowager6.search(result2.text)
-            matchSnowager7 = patternSnowager7.search(result2.text)
-            matchSnowager8 = patternSnowager8.search(result2.text)
-            if matchSnowager2 or matchSnowager3:
-                logger.info('The Snowager has been visited')
-            elif matchSnowager4:
-                logger.info('The Snowager battledome challenger has been unlocked!')
-            elif matchSnowager5:
-                logger.info('The Snowager attacks!')
-            elif matchSnowager7 or matchSnowager8:
-                logger.info('Nothing happens')
+            soup2 = bs(result2.content, 'lxml')
+            soup2_match_1 = soup2.select_one('td.content center p')
+            soup2_match_1_text = soup2_match_1.get_text()
+            if self.PATTERN_SNOWAGER_1.search(soup2_match_1_text):
+                soup2_match_2 = soup2.select_one('td.content center p b')
+                if soup2_match_2:
+                    logger.info('Received: {}'.format(soup2_match_2.get_text()))
+            elif self.PATTERN_SNOWAGER_1.search(soup2_match_1_text):
+                soup2_match_2 = soup2.select_one('td.content center p b')
+                if soup2_match_2:
+                    logger.info('Received an exclusive prize: {}'.format(soup2_match_2.get_text()))
+            elif self.PATTERN_SNOWAGER_3.search(soup2_match_1_text):
+                logger.info('[Advent] The Snowager has been visited today')
+            elif self.PATTERN_SNOWAGER_4.search(soup2_match_1_text):
+                logger.info('The Snowager has been visited already')
+            elif self.PATTERN_SNOWAGER_5.search(soup2_match_1_text):
+                logger.info('The Snowager is awake!')
+            elif self.PATTERN_SNOWAGER_6.search(soup2_match_1_text) or self.PATTERN_SNOWAGER_7.search(soup2_match_1_text):
+                logger.info('Received nothing')
+            elif self.PATTERN_SNOWAGER_8.search(soup2_match_1_text):
+                logger.info('The Snowager attacked!')
             else:
                 logger.warning('Unknown event!')
         else:
