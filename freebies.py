@@ -28,6 +28,7 @@ class Freebies:
         self.LINK_TRUDY_4 = '/trudydaily/ajax/claimprize.php'
         self.LINK_SNOWAGER_1 = '/winter/snowager.phtml'
         self.LINK_SNOWAGER_2 = '/winter/snowager2.phtml'
+        self.LINK_ANCHOR = '/pirates/anchormanagement.phtml'
 
         # Params
         self.PARAMS_TRUDY = {'delevent': 'yes'}
@@ -198,40 +199,32 @@ class Freebies:
             logger.info('The Snowager is awake')
 
     def doAnchor(self):
-        # Links
-        linkAnchor1 = '/pirates/anchormanagement.phtml'
-        linkAnchor2 = '/pirates/index.phtml'
-
-        # Regexes
-        patternAnchor1 = re.compile(
-            'id="form-fire-cannon"><input name="action" type="hidden" value="(?P<value>.+?)">')
-        patternAnchor2 = re.compile('<span class="prize-item-name">(?P<prize>.+?)</span>')
-
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Anchor')
 
         # Visit page
-        result1 = self.account.get(linkAnchor1)
+        result1 = self.account.get(self.LINK_ANCHOR)
+        soup1 = bs(result1.content, 'lxml')
+        soup1_match = soup1.select_one('#form-fire-cannon input')
 
         # Grab form value and POST
-        matchAnchor1 = patternAnchor1.search(result1.text)
-
-        if matchAnchor1:
+        if soup1_match:
+            soup1_value = soup1_match.get('value')
             result2 = self.account.post(
-                linkAnchor1,
-                data={
-                    'action': matchAnchor1['value']
-                },
-                referer=linkAnchor1
+                self.LINK_ANCHOR,
+                data={'action': soup1_value},
+                referer=self.LINK_ANCHOR
             )
             self.save(result2, 'anchormanagement')
 
             # Find prize
-            matchAnchor2 = patternAnchor2.search(result2.text)
-            if matchAnchor2:
-                logger.info('Acquired ' + matchAnchor2['prize'])
+            soup2 = bs(result2.content, 'lxml')
+            soup2_match = soup2.select_one('.prize-item-name')
+            if soup2_match:
+                soup2_name = soup2_match.get_text()
+                logger.info('Received: {}'.format(soup2_name))
             else:
-                logger.info('Got nothing')
+                logger.info('Received nothing')
         else:
             logger.info('Already visited today!')
 
