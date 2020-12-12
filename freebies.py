@@ -107,9 +107,7 @@ class Freebies:
                     soup3_regexmatch = self.PATTERN_TRUDY_2.search(soup3_match.get('src'))
                     result4 = self.account.get(
                         self.LINK_TRUDY_3,
-                        params={
-                            'v': soup3_regexmatch['v'],
-                        },
+                        params={'v': soup3_regexmatch['v']},
                         referer=soup2_regexmatch['link']
                     )
 
