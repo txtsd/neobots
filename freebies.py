@@ -178,7 +178,7 @@ class Freebies:
                 soup2_match_2 = soup2.select_one('td.content center p b')
                 if soup2_match_2:
                     logger.info('Received: {}'.format(soup2_match_2.get_text()))
-            elif self.PATTERN_SNOWAGER_1.search(soup2_match_1_text):
+            elif self.PATTERN_SNOWAGER_2.search(soup2_match_1_text):
                 soup2_match_2 = soup2.select_one('td.content center p b')
                 if soup2_match_2:
                     logger.info('Received an exclusive prize: {}'.format(soup2_match_2.get_text()))
