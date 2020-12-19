@@ -1,7 +1,8 @@
-from neoaccount import NeoAccount
-from freebies import Freebies
-import toml
 import logging
+
+import toml
+from freebies import Freebies
+from neoaccount import NeoAccount
 
 # Setup logs
 logger = logging.getLogger('neobots')

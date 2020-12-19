@@ -1,7 +1,8 @@
-import requests
-import pickle
 import logging
+import pickle
 from pathlib import Path
+
+import requests
 from bs4 import BeautifulSoup as bs
 
 

@@ -1,9 +1,10 @@
-import re
 import json
-import time
 import logging
+import re
+import time
 from datetime import date
 from pathlib import Path
+
 from bs4 import BeautifulSoup as bs
 
 
