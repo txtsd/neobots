@@ -29,9 +29,11 @@ class Freebies:
         self.LINK_SNOWAGER_1 = '/winter/snowager.phtml'
         self.LINK_SNOWAGER_2 = '/winter/snowager2.phtml'
         self.LINK_ANCHOR = '/pirates/anchormanagement.phtml'
+        self.LINK_APPLEBOB = '/halloween/applebobbing.phtml'
 
         # Params
         self.PARAMS_TRUDY = {'delevent': 'yes'}
+        self.PARAMS_APPLEBOB = {'bobbing': '1'}
 
         # POST Data
         self.DATA_TRUDY_1 = {'action': 'beginroll'}
@@ -52,6 +54,7 @@ class Freebies:
         self.PATTERN_SNOWAGER_6 = re.compile(r'The Snowager moves slightly in its sleep')
         self.PATTERN_SNOWAGER_7 = re.compile(r'The Snowager awakes, looks straight at you')
         self.PATTERN_SNOWAGER_8 = re.compile(r'ROOOOAARRR')
+        self.PATTERN_APPLEBOB_1 = re.compile(r'As you gaze into the water, about to bob your head in for a chance at appley-goodness')
 
     def save(self, reply, name, JSON=False):
         timeNow = time.time_ns()
@@ -228,31 +231,30 @@ class Freebies:
             logger.info('Already visited today!')
 
     def doAppleBobbing(self):
-        # Links
-        linkAppleBob1 = '/halloween/applebobbing.phtml'
-        linkAppleBob2 = '/halloween/applebobbing.phtml?bobbing=1'
-
-        # Regexes
-        patternAppleBob1 = re.compile('<a href="/halloween/applebobbing.phtml?bobbing=1">')
-        patternAppleBob2 = re.compile('<br><b>(?P<prize>.+?)</b></center><br>')
-
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.AppleBobbing')
 
         # Visit page
-        result1 = self.account.get(linkAppleBob1)
-        matchAppleBob1 = patternAppleBob1.search(result1.text)
+        result1 = self.account.get(self.LINK_APPLEBOB)
+        soup1 = bs(result1.content, 'lxml')
+        soup1_match = soup1.select_one('#bob_content a')
 
-        if matchAppleBob1:
-            # Bob for apples
-            result2 = self.account.get(linkAppleBob2, referer=linkAppleBob1)
-            self.save(result2, 'appleBobbing')
+        # Bob for apples
+        if soup1_match:
+            result2 = self.account.get(
+                self.LINK_APPLEBOB,
+                params=self.PARAMS_APPLEBOB,
+                referer=self.LINK_APPLEBOB
+            )
+            self.save(result2, 'applebobbing')
 
             # Find prize
-            matchAppleBob2 = patternAppleBob2.search(result2.text)
-            if matchAppleBob2:
-                logger.info('Acquired ' + matchAppleBob2['prize'])
+            soup2 = bs(result2.content, 'lxml')
+            soup2_match1 = soup2.select_one('#bob_middle center b')
+            soup2_match2 = soup2.select_one('#bob_middle')
+            if soup2_match1:
+                logger.info('Received: {}'.format(soup2_match1.get_text()))
             else:
-                logger.warning('Unknown event!')
+                logger.info('Received nothing!')
         else:
             logger.info('Already visited today!')
