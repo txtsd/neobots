@@ -136,7 +136,7 @@ class Freebies:
                             # Prize has been won
                             # Display before clicking the modal
                             for prize in json6['prizes']:
-                                logger.info('Received: {} {}'.format(prize('value'), prize('name')))
+                                logger.info('Received: {} {}'.format(prize['value'], prize['name']))
                             result7 = self.account.xhr(
                                 self.LINK_TRUDY_4,
                                 data=self.DATA_TRUDY_2,
