@@ -21,7 +21,6 @@ class Freebies:
 
         # Links
         self.LINK_INDEX = '/index.html'
-        self.LINK_EVENTS = '/allevents.phtml'
         self.LINK_TRUDY_1 = '/trudys_surprise.phtml'
         self.LINK_TRUDY_2 = '/trudydaily/slotgame.phtml'
         self.LINK_TRUDY_3 = '/trudydaily/js/slotsgame.js'
