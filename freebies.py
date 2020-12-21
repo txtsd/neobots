@@ -21,56 +21,6 @@ class Freebies:
 
         # Links
         self.LINK_INDEX = '/index.html'
-        self.LINK_TRUDY_1 = '/trudys_surprise.phtml'
-        self.LINK_TRUDY_2 = '/trudydaily/slotgame.phtml'
-        self.LINK_TRUDY_3 = '/trudydaily/js/slotsgame.js'
-        self.LINK_TRUDY_4 = '/trudydaily/ajax/claimprize.php'
-        self.LINK_SNOWAGER_1 = '/winter/snowager.phtml'
-        self.LINK_SNOWAGER_2 = '/winter/snowager2.phtml'
-        self.LINK_ANCHOR = '/pirates/anchormanagement.phtml'
-        self.LINK_APPLEBOB = '/halloween/applebobbing.phtml'
-        self.LINK_ADVENT_1 = '/winter/adventcalendar.phtml'
-        self.LINK_ADVENT_2 = '/winter/adventClick.php'
-        self.LINK_ADVENT_3 = '/winter/process_adventcalendar.phtml'
-        self.LINK_BANK_1 = '/bank.phtml'
-        self.LINK_BANK_2 = '/process_bank.phtml'
-        self.LINK_COLTZAN = '/desert/shrine.phtml'
-        self.LINK_PUZZLE_1 = '/community/index.phtml'
-        self.LINK_PUZZLE_2 = 'http://www.jellyneo.net/?go=dailypuzzle'
-        self.LINK_QUARRY = '/magma/quarry.phtml'
-
-        # Params
-        self.PARAMS_TRUDY = {'delevent': 'yes'}
-        self.PARAMS_APPLEBOB = {'bobbing': '1'}
-
-        # POST Data
-        self.DATA_TRUDY_1 = {'action': 'beginroll'}
-        self.DATA_TRUDY_2 = {'action': 'prizeclaimed'}
-        self.DATA_BANK = {'type': 'interest'}
-        self.DATA_COLTZAN = {'type': 'approach'}
-
-        # Search texts
-        self.TEXT_TRUDY = "Trudy's Surprise"
-        self.TEXT_SNOWAGER = 'Attempt to steal a piece of treasure'
-        self.TEXT_ADVENT = 'Collect My Prize!!!'
-        self.TEXT_COLTZAN = 'Approach the Shrine'
-        self.TEXT_QUARRY = "Hey!  What do you think you're doing?!"
-
-        # Regexes
-        self.PATTERN_TRUDY_1 = re.compile(r'(?P<link>/trudydaily/slotgame\.phtml\?id=(?P<id>.*?)&slt=(?P<slt>\d+))')
-        self.PATTERN_TRUDY_2 = re.compile(r'(?P<link>/trudydaily/js/slotsgame\.js\?v=(?P<v>\d+))')
-        self.PATTERN_SNOWAGER_1 = re.compile(r'You carefully walk in and pick up a')
-        self.PATTERN_SNOWAGER_2 = re.compile(r'You carefully walk in and hastily pick up an item')
-        self.PATTERN_SNOWAGER_3 = re.compile(r'You have already collected your prize today.')
-        self.PATTERN_SNOWAGER_4 = re.compile(r'Come back later.')
-        self.PATTERN_SNOWAGER_5 = re.compile(r'The Snowager is awake')
-        self.PATTERN_SNOWAGER_6 = re.compile(r'The Snowager moves slightly in its sleep')
-        self.PATTERN_SNOWAGER_7 = re.compile(r'The Snowager awakes, looks straight at you')
-        self.PATTERN_SNOWAGER_8 = re.compile(r'ROOOOAARRR')
-        self.PATTERN_APPLEBOB_1 = re.compile(r'As you gaze into the water, about to bob your head in for a chance at appley-goodness')
-        self.PATTERN_ADVENT_1 = re.compile(r'day: "(?P<day>\d+?)"')
-        self.PATTERN_ADVENT_2 = re.compile(r'ck: "(?P<ck>.+?)"')
-        self.PATTERN_BANK = re.compile(r'Collect Interest \((?P<np>\d+) NP\)')
 
     def save(self, reply, name, JSON=False):
         timeNow = time.time_ns()
@@ -90,16 +40,28 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Trudy')
 
+        # Constants
+        LINK_TRUDY_1 = '/trudys_surprise.phtml'
+        LINK_TRUDY_2 = '/trudydaily/slotgame.phtml'
+        LINK_TRUDY_3 = '/trudydaily/js/slotsgame.js'
+        LINK_TRUDY_4 = '/trudydaily/ajax/claimprize.php'
+        PARAMS_TRUDY = {'delevent': 'yes'}
+        DATA_TRUDY_1 = {'action': 'beginroll'}
+        DATA_TRUDY_2 = {'action': 'prizeclaimed'}
+        TEXT_TRUDY = "Trudy's Surprise"
+        PATTERN_TRUDY_1 = re.compile(r'(?P<link>/trudydaily/slotgame\.phtml\?id=(?P<id>.*?)&slt=(?P<slt>\d+))')
+        PATTERN_TRUDY_2 = re.compile(r'(?P<link>/trudydaily/js/slotsgame\.js\?v=(?P<v>\d+))')
+
         # Look for Trudy's Surprise event notfif at top of page
         result1 = self.account.get(self.LINK_INDEX)
         soup1 = bs(result1.content, 'lxml')
         soup1_match = soup1.select_one('#neobdy.en div#main div#header table tr td.eventIcon.sf b')
 
         # If event exists
-        if soup1_match and (soup1_match.get_text() == self.TEXT_TRUDY):
+        if soup1_match and (soup1_match.get_text() == TEXT_TRUDY):
             result2 = self.account.get(
-                self.LINK_TRUDY_1,
-                params=self.PARAMS_TRUDY,
+                LINK_TRUDY_1,
+                params=PARAMS_TRUDY,
                 referer=self.LINK_INDEX
             )
             soup2 = bs(result2.content, 'lxml')
@@ -107,14 +69,14 @@ class Freebies:
 
             # Check for trudy game link
             if soup2_match:
-                soup2_regexmatch = self.PATTERN_TRUDY_1.search(soup2_match.get('src'))
+                soup2_regexmatch = PATTERN_TRUDY_1.search(soup2_match.get('src'))
                 result3 = self.account.get(
-                    self.LINK_TRUDY_2,
+                    LINK_TRUDY_2,
                     params={
                         'id': soup2_regexmatch['id'],
                         'slt': soup2_regexmatch['slt']
                     },
-                    referer=self.LINK_TRUDY_1
+                    referer=LINK_TRUDY_1
                 )
                 soup3 = bs(result3.content, 'lxml')
                 soup3_matches = soup3.select('script')
@@ -123,21 +85,21 @@ class Freebies:
 
                 # Check for slotsgame link
                 if soup3_match:
-                    soup3_regexmatch = self.PATTERN_TRUDY_2.search(soup3_match.get('src'))
+                    soup3_regexmatch = PATTERN_TRUDY_2.search(soup3_match.get('src'))
                     result4 = self.account.get(
-                        self.LINK_TRUDY_3,
+                        LINK_TRUDY_3,
                         params={'v': soup3_regexmatch['v']},
                         referer=soup2_regexmatch['link']
                     )
 
                     # Start POSTing
                     result5 = self.account.xhr(
-                        self.LINK_TRUDY_4,
+                        LINK_TRUDY_4,
                         data={
                             'action': 'getslotstate',
                             'key': soup2_regexmatch['id']
                         },
-                        referer=self.LINK_TRUDY_1
+                        referer=LINK_TRUDY_1
                     )
                     self.save(result5, 'trudy_getslotstate', JSON=True)
                     json5 = result5.json()
@@ -145,9 +107,9 @@ class Freebies:
                         time.sleep(5)
                         # Next POST
                         result6 = self.account.xhr(
-                            self.LINK_TRUDY_4,
-                            data=self.DATA_TRUDY_1,
-                            referer=self.LINK_TRUDY_1
+                            LINK_TRUDY_4,
+                            data=DATA_TRUDY_1,
+                            referer=LINK_TRUDY_1
                         )
                         self.save(result6, 'trudy_beginroll', JSON=True)
                         json6 = result6.json()
@@ -157,13 +119,13 @@ class Freebies:
                             for prize in json6['prizes']:
                                 logger.info('Received: {} {}'.format(prize['value'], prize['name']))
                             result7 = self.account.xhr(
-                                self.LINK_TRUDY_4,
-                                data=self.DATA_TRUDY_2,
-                                referer=self.LINK_TRUDY_1
+                                LINK_TRUDY_4,
+                                data=DATA_TRUDY_2,
+                                referer=LINK_TRUDY_1
                             )
                             json7 = result7.json()
                             if not json7['error']:
-                                result8 = self.account.get(self.LINK_TRUDY_1, referer=self.LINK_TRUDY_1)
+                                result8 = self.account.get(LINK_TRUDY_1, referer=LINK_TRUDY_1)
                             else:
                                 logger.error(json7['error'])
                         else:
@@ -181,35 +143,48 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Snowager')
 
+        # Constants
+        LINK_SNOWAGER_1 = '/winter/snowager.phtml'
+        LINK_SNOWAGER_2 = '/winter/snowager2.phtml'
+        TEXT_SNOWAGER = 'Attempt to steal a piece of treasure'
+        PATTERN_SNOWAGER_1 = re.compile(r'You carefully walk in and pick up a')
+        PATTERN_SNOWAGER_2 = re.compile(r'You carefully walk in and hastily pick up an item')
+        PATTERN_SNOWAGER_3 = re.compile(r'You have already collected your prize today.')
+        PATTERN_SNOWAGER_4 = re.compile(r'Come back later.')
+        PATTERN_SNOWAGER_5 = re.compile(r'The Snowager is awake')
+        PATTERN_SNOWAGER_6 = re.compile(r'The Snowager moves slightly in its sleep')
+        PATTERN_SNOWAGER_7 = re.compile(r'The Snowager awakes, looks straight at you')
+        PATTERN_SNOWAGER_8 = re.compile(r'ROOOOAARRR')
+
         # Visit snowager page
-        result1 = self.account.get(self.LINK_SNOWAGER_1)
+        result1 = self.account.get(LINK_SNOWAGER_1)
         soup1 = bs(result1.content, 'lxml')
         soup1_match = soup1.select_one('.content center form input')
 
         # Probe snowager
-        if soup1_match and soup1_match.get('value') == self.TEXT_SNOWAGER:
-            result2 = self.account.get(self.LINK_SNOWAGER_2, referer=self.LINK_SNOWAGER_1)
+        if soup1_match and soup1_match.get('value') == TEXT_SNOWAGER:
+            result2 = self.account.get(LINK_SNOWAGER_2, referer=LINK_SNOWAGER_1)
             self.save(result2, 'snowager')
             soup2 = bs(result2.content, 'lxml')
             soup2_match_1 = soup2.select_one('td.content center p')
             soup2_match_1_text = soup2_match_1.get_text()
-            if self.PATTERN_SNOWAGER_1.search(soup2_match_1_text):
+            if PATTERN_SNOWAGER_1.search(soup2_match_1_text):
                 soup2_match_2 = soup2.select_one('td.content center p b')
                 if soup2_match_2:
                     logger.info('Received: {}'.format(soup2_match_2.get_text()))
-            elif self.PATTERN_SNOWAGER_2.search(soup2_match_1_text):
+            elif PATTERN_SNOWAGER_2.search(soup2_match_1_text):
                 soup2_match_2 = soup2.select_one('td.content center p b')
                 if soup2_match_2:
                     logger.info('Received an exclusive prize: {}'.format(soup2_match_2.get_text()))
-            elif self.PATTERN_SNOWAGER_3.search(soup2_match_1_text):
+            elif PATTERN_SNOWAGER_3.search(soup2_match_1_text):
                 logger.info('[Advent] The Snowager has been visited today')
-            elif self.PATTERN_SNOWAGER_4.search(soup2_match_1_text):
+            elif PATTERN_SNOWAGER_4.search(soup2_match_1_text):
                 logger.info('The Snowager has been visited already')
-            elif self.PATTERN_SNOWAGER_5.search(soup2_match_1_text):
+            elif PATTERN_SNOWAGER_5.search(soup2_match_1_text):
                 logger.info('The Snowager is awake!')
-            elif self.PATTERN_SNOWAGER_6.search(soup2_match_1_text) or self.PATTERN_SNOWAGER_7.search(soup2_match_1_text):
+            elif PATTERN_SNOWAGER_6.search(soup2_match_1_text) or PATTERN_SNOWAGER_7.search(soup2_match_1_text):
                 logger.info('Received nothing')
-            elif self.PATTERN_SNOWAGER_8.search(soup2_match_1_text):
+            elif PATTERN_SNOWAGER_8.search(soup2_match_1_text):
                 logger.info('The Snowager attacked!')
             else:
                 logger.warning('Unknown event!')
@@ -220,8 +195,11 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Anchor')
 
+        # Constants
+        LINK_ANCHOR = '/pirates/anchormanagement.phtml'
+
         # Visit page
-        result1 = self.account.get(self.LINK_ANCHOR)
+        result1 = self.account.get(LINK_ANCHOR)
         soup1 = bs(result1.content, 'lxml')
         soup1_match = soup1.select_one('#form-fire-cannon input')
 
@@ -229,9 +207,9 @@ class Freebies:
         if soup1_match:
             soup1_value = soup1_match.get('value')
             result2 = self.account.post(
-                self.LINK_ANCHOR,
+                LINK_ANCHOR,
                 data={'action': soup1_value},
-                referer=self.LINK_ANCHOR
+                referer=LINK_ANCHOR
             )
             self.save(result2, 'anchormanagement')
 
@@ -250,17 +228,22 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.AppleBobbing')
 
+        # Constants
+        LINK_APPLEBOB = '/halloween/applebobbing.phtml'
+        PARAMS_APPLEBOB = {'bobbing': '1'}
+        PATTERN_APPLEBOB_1 = re.compile(r'As you gaze into the water, about to bob your head in for a chance at appley-goodness')
+
         # Visit page
-        result1 = self.account.get(self.LINK_APPLEBOB)
+        result1 = self.account.get(LINK_APPLEBOB)
         soup1 = bs(result1.content, 'lxml')
         soup1_match = soup1.select_one('#bob_content a')
 
         # Bob for apples
         if soup1_match:
             result2 = self.account.get(
-                self.LINK_APPLEBOB,
-                params=self.PARAMS_APPLEBOB,
-                referer=self.LINK_APPLEBOB
+                LINK_APPLEBOB,
+                params=PARAMS_APPLEBOB,
+                referer=LINK_APPLEBOB
             )
             self.save(result2, 'applebobbing')
 
@@ -279,33 +262,41 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Advent')
 
+        # Constants
+        LINK_ADVENT_1 = '/winter/adventcalendar.phtml'
+        LINK_ADVENT_2 = '/winter/adventClick.php'
+        LINK_ADVENT_3 = '/winter/process_adventcalendar.phtml'
+        TEXT_ADVENT = 'Collect My Prize!!!'
+        PATTERN_ADVENT_1 = re.compile(r'day: "(?P<day>\d+?)"')
+        PATTERN_ADVENT_2 = re.compile(r'ck: "(?P<ck>.+?)"')
+
         # Visit page
-        result1 = self.account.get(self.LINK_ADVENT_1)
+        result1 = self.account.get(LINK_ADVENT_1)
         soup1 = bs(result1.content, 'lxml')
         soup1_match = soup1.select_one('.content div form input')
 
         # Check for receive rewards button!
-        if soup1_match and soup1_match.get('value') == self.TEXT_ADVENT:
-            match1 = self.PATTERN_ADVENT_1.search(result1.text)
-            match2 = self.PATTERN_ADVENT_2.search(result1.text)
+        if soup1_match and soup1_match.get('value') == TEXT_ADVENT:
+            match1 = PATTERN_ADVENT_1.search(result1.text)
+            match2 = PATTERN_ADVENT_2.search(result1.text)
 
             # Click hidden object
             if match1 and match2:
                 result2 = self.account.post(
-                    self.LINK_ADVENT_2,
+                    LINK_ADVENT_2,
                     data={
                         'day': match1['day'],
                         'ck': match2['ck']
                     },
-                    referer=self.LINK_ADVENT_1
+                    referer=LINK_ADVENT_1
                 )
                 self.save(result2, 'adventHidden')
                 logger.info('Received: {}'.format(result2.json()['prize']['name']))
 
             # Get rewards
             result3 = self.account.post(
-                self.LINK_ADVENT_3,
-                referer=self.LINK_ADVENT_1
+                LINK_ADVENT_3,
+                referer=LINK_ADVENT_1
             )
             self.save(result3, 'adventRegular')
             soup3 = bs(result3.content, 'lxml')
@@ -322,20 +313,26 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.BankCollect')
 
+        # Constants
+        LINK_BANK_1 = '/bank.phtml'
+        LINK_BANK_2 = '/process_bank.phtml'
+        DATA_BANK = {'type': 'interest'}
+        PATTERN_BANK = re.compile(r'Collect Interest \((?P<np>\d+) NP\)')
+
         # Visit page
-        result1 = self.account.get(self.LINK_BANK_1)
+        result1 = self.account.get(LINK_BANK_1)
         soup = bs(result1.content, 'lxml')
         soup_matches = soup.select('.contentModuleContent div form input')
         if soup_matches:
             soup_match = soup_matches[-1]  # Last match since there are other form inputs
-            match = self.PATTERN_BANK.search(soup_match.get('value'))
+            match = PATTERN_BANK.search(soup_match.get('value'))
 
             # Collect interest
             if match:
                 result2 = self.account.post(
-                    self.LINK_BANK_2,
-                    data=self.DATA_BANK,
-                    referer=self.LINK_BANK_1
+                    LINK_BANK_2,
+                    data=DATA_BANK,
+                    referer=LINK_BANK_1
                 )
                 self.save(result2, 'bankCollect')
                 logger.info('Collected: {} NP'.format(match['np']))
@@ -350,18 +347,23 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Coltzan')
 
+        # Constants
+        LINK_COLTZAN = '/desert/shrine.phtml'
+        DATA_COLTZAN = {'type': 'approach'}
+        TEXT_COLTZAN = 'Approach the Shrine'
+
         # Visit page
-        result1 = self.account.get(self.LINK_COLTZAN)
+        result1 = self.account.get(LINK_COLTZAN)
         soup1 = bs(result1.content, 'lxml')
         soup1_matches = soup1.select('.content div form input')
         soup1_match = soup1_matches[1]  # First match is hidden input
 
         # Approach the shrine + also works for nothing happens
-        if soup1_match and soup1_match.get('value') == self.TEXT_COLTZAN:
+        if soup1_match and soup1_match.get('value') == TEXT_COLTZAN:
             result2 = self.account.post(
-                self.LINK_COLTZAN,
-                data=self.DATA_COLTZAN,
-                referer=self.LINK_COLTZAN
+                LINK_COLTZAN,
+                data=DATA_COLTZAN,
+                referer=LINK_COLTZAN
             )
             self.save(result2, 'coltzan')
             soup2 = bs(result2.content, 'lxml')
@@ -374,8 +376,12 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.DailyPuzzle')
 
+        # Constants
+        LINK_PUZZLE_1 = '/community/index.phtml'
+        LINK_PUZZLE_2 = 'http://www.jellyneo.net/?go=dailypuzzle'
+
         # Visit page
-        result1 = self.account.get(self.LINK_PUZZLE_1)
+        result1 = self.account.get(LINK_PUZZLE_1)
         soup1 = bs(result1.content, 'lxml')
         # Question
         soup1_match1 = soup1.select_one('.question')
@@ -384,7 +390,7 @@ class Freebies:
         date = soup1_match2.get('value')
 
         # Visit Jellyneo solutions page
-        result2 = self.account.get(self.LINK_PUZZLE_2)
+        result2 = self.account.get(LINK_PUZZLE_2)
         soup2 = bs(result2.content, 'lxml')
         soup2_matches = soup2.select('.panel p')
         # Uuestion
@@ -404,13 +410,13 @@ class Freebies:
 
             if trivia_value:
                 result3 = self.account.post(
-                    self.LINK_PUZZLE_1,
+                    LINK_PUZZLE_1,
                     data={
                         'trivia_date': date,
                         'trivia_response': trivia_value,
                         'submit': 'Submit'
                     },
-                    referer=self.LINK_PUZZLE_1
+                    referer=LINK_PUZZLE_1
                 )
                 self.save(result3, 'dailyPuzzle')
                 soup3 = bs(result3.content, 'lxml')
@@ -431,13 +437,17 @@ class Freebies:
         # Setup logger
         logger = logging.getLogger('neobots.Freebies.Quarry')
 
+        # Constants
+        LINK_QUARRY = '/magma/quarry.phtml'
+        TEXT_QUARRY = "Hey!  What do you think you're doing?!"
+
         # Visit page
-        result = self.account.get(self.LINK_QUARRY)
+        result = self.account.get(LINK_QUARRY)
         self.save(result, 'quarry')
         soup = bs(result.content, 'lxml')
         soup_match = soup.select_one('.content div b')
 
-        if soup_match and not soup_match.get_text() == self.TEXT_QUARRY:
+        if soup_match and not soup_match.get_text() == TEXT_QUARRY:
             logger.info('Received: {}'.format(soup_match.get_text()))
         else:
             logger.info('Already visited today!')
