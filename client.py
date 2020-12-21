@@ -44,3 +44,4 @@ if account.login():
     freebies.doAdvent()
     freebies.doBankCollect()
     freebies.doColtzan()
+    freebies.doDailyPuzzle()

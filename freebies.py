@@ -35,6 +35,8 @@ class Freebies:
         self.LINK_BANK_1 = '/bank.phtml'
         self.LINK_BANK_2 = '/process_bank.phtml'
         self.LINK_COLTZAN = '/desert/shrine.phtml'
+        self.LINK_PUZZLE_1 = '/community/index.phtml'
+        self.LINK_PUZZLE_2 = 'http://www.jellyneo.net/?go=dailypuzzle'
 
         # Params
         self.PARAMS_TRUDY = {'delevent': 'yes'}
@@ -364,3 +366,56 @@ class Freebies:
             logger.info(soup2_match.get_text())
         else:
             logger.info('Already visited today!')
+
+    def doDailyPuzzle(self):
+        # Setup logger
+        logger = logging.getLogger('neobots.Freebies.DailyPuzzle')
+
+        # Visit page
+        result1 = self.account.get(self.LINK_PUZZLE_1)
+        soup1 = bs(result1.content, 'lxml')
+        # Question
+        soup1_match1 = soup1.select_one('.question')
+        # Date
+        soup1_match2 = soup1.select_one('form[action="/community/index.phtml"] input')
+        date = soup1_match2.get('value')
+
+        # Visit Jellyneo solutions page
+        result2 = self.account.get(self.LINK_PUZZLE_2)
+        soup2 = bs(result2.content, 'lxml')
+        soup2_matches = soup2.select('.panel p')
+        # Uuestion
+        soup2_match1 = soup2_matches[2]
+        # Answer
+        soup2_match2 = soup2_matches[3]
+
+        # Check if question matches
+        if soup1_match1.get_text() in soup2_match1.get_text():
+            # Get options
+            soup1_matches = soup1.select('select[name="trivia_response"] option')
+
+            trivia_value = None
+            for match in soup1_matches:
+                if match.get_text() in soup2_match2.get_text():
+                    trivia_value = match.get('value')
+
+            if trivia_value:
+                result3 = self.account.post(
+                    self.LINK_PUZZLE_1,
+                    data={
+                        'trivia_date': date,
+                        'trivia_response': trivia_value,
+                        'submit': 'Submit'
+                    },
+                    referer=self.LINK_PUZZLE_1
+                )
+                self.save(result3, 'dailyPuzzle')
+                soup3 = bs(result3.content, 'lxml')
+                soup3_matches = soup3.select('.question b')
+                logger.info('Received: {} NP'.format(soup3_matches[0].get_text()))
+                if len(soup3_matches) > 1:
+                    logger.info('Received: {}'.format(soup3_matches[1].get_text()))
+            else:
+                logger.error('Matching trivia answer not found!')
+        else:
+            logger.error('Matching trivia question not found!')
