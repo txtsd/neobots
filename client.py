@@ -41,3 +41,4 @@ if account.login():
     freebies.doSnowager()
     freebies.doAnchor()
     freebies.doAppleBobbing()
+    freebies.doAdvent()

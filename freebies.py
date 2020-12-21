@@ -29,6 +29,9 @@ class Freebies:
         self.LINK_SNOWAGER_2 = '/winter/snowager2.phtml'
         self.LINK_ANCHOR = '/pirates/anchormanagement.phtml'
         self.LINK_APPLEBOB = '/halloween/applebobbing.phtml'
+        self.LINK_ADVENT_1 = '/winter/adventcalendar.phtml'
+        self.LINK_ADVENT_2 = '/winter/adventClick.php'
+        self.LINK_ADVENT_3 = '/winter/process_adventcalendar.phtml'
 
         # Params
         self.PARAMS_TRUDY = {'delevent': 'yes'}
@@ -41,6 +44,7 @@ class Freebies:
         # Search texts
         self.TEXT_TRUDY = "Trudy's Surprise"
         self.TEXT_SNOWAGER = 'Attempt to steal a piece of treasure'
+        self.TEXT_ADVENT = 'Collect My Prize!!!'
 
         # Regexes
         self.PATTERN_TRUDY_1 = re.compile(r'(?P<link>/trudydaily/slotgame\.phtml\?id=(?P<id>.*?)&slt=(?P<slt>\d+))')
@@ -54,6 +58,8 @@ class Freebies:
         self.PATTERN_SNOWAGER_7 = re.compile(r'The Snowager awakes, looks straight at you')
         self.PATTERN_SNOWAGER_8 = re.compile(r'ROOOOAARRR')
         self.PATTERN_APPLEBOB_1 = re.compile(r'As you gaze into the water, about to bob your head in for a chance at appley-goodness')
+        self.PATTERN_ADVENT_1 = re.compile(r'day: "(?P<day>\d+?)"')
+        self.PATTERN_ADVENT_2 = re.compile(r'ck: "(?P<ck>.+?)"')
 
     def save(self, reply, name, JSON=False):
         timeNow = time.time_ns()
@@ -253,6 +259,48 @@ class Freebies:
             soup2_match2 = soup2.select_one('#bob_middle')
             if soup2_match1:
                 logger.info('Received: {}'.format(soup2_match1.get_text()))
+            else:
+                logger.info('Received nothing!')
+        else:
+            logger.info('Already visited today!')
+
+    def doAdvent(self):
+        # Setup logger
+        logger = logging.getLogger('neobots.Freebies.Advent')
+
+        # Visit page
+        result1 = self.account.get(self.LINK_ADVENT_1)
+        soup1 = bs(result1.content, 'lxml')
+        soup1_match = soup1.select_one('.content div form input')
+
+        # Check for receive rewards button!
+        if soup1_match and soup1_match.get('value') == self.TEXT_ADVENT:
+            match1 = self.PATTERN_ADVENT_1.search(result1.text)
+            match2 = self.PATTERN_ADVENT_2.search(result1.text)
+
+            # Click hidden object
+            if match1 and match2:
+                result2 = self.account.post(
+                    self.LINK_ADVENT_2,
+                    data={
+                        'day': match1['day'],
+                        'ck': match2['ck']
+                    },
+                    referer=self.LINK_ADVENT_1
+                )
+                self.save(result2, 'advent')
+                logger.info('Received: {}'.format(result2.json()['prize']['name']))
+
+            # Get rewards
+            result3 = self.account.post(
+                self.LINK_ADVENT_3,
+                referer=self.LINK_ADVENT_1
+            )
+            soup3 = bs(result3.content, 'lxml')
+            soup3_matches = soup3.select('.content div center b')
+            if soup3_matches:
+                for match in soup3_matches:
+                    logger.info('Received {}'.format(match.get_text()))
             else:
                 logger.info('Received nothing!')
         else:
