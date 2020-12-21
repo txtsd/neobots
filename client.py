@@ -43,3 +43,4 @@ if account.login():
     freebies.doAppleBobbing()
     freebies.doAdvent()
     freebies.doBankCollect()
+    freebies.doColtzan()

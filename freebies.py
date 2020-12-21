@@ -34,6 +34,7 @@ class Freebies:
         self.LINK_ADVENT_3 = '/winter/process_adventcalendar.phtml'
         self.LINK_BANK_1 = '/bank.phtml'
         self.LINK_BANK_2 = '/process_bank.phtml'
+        self.LINK_COLTZAN = '/desert/shrine.phtml'
 
         # Params
         self.PARAMS_TRUDY = {'delevent': 'yes'}
@@ -43,11 +44,13 @@ class Freebies:
         self.DATA_TRUDY_1 = {'action': 'beginroll'}
         self.DATA_TRUDY_2 = {'action': 'prizeclaimed'}
         self.DATA_BANK = {'type': 'interest'}
+        self.DATA_COLTZAN = {'type': 'approach'}
 
         # Search texts
         self.TEXT_TRUDY = "Trudy's Surprise"
         self.TEXT_SNOWAGER = 'Attempt to steal a piece of treasure'
         self.TEXT_ADVENT = 'Collect My Prize!!!'
+        self.TEXT_COLTZAN = 'Approach the Shrine'
 
         # Regexes
         self.PATTERN_TRUDY_1 = re.compile(r'(?P<link>/trudydaily/slotgame\.phtml\?id=(?P<id>.*?)&slt=(?P<slt>\d+))')
@@ -337,3 +340,27 @@ class Freebies:
             logger.info('Already collected or transacted today!')
 
         # TODO: Add auto bank account upgrade
+
+    def doColtzan(self):
+        # Setup logger
+        logger = logging.getLogger('neobots.Freebies.Coltzan')
+
+        # Visit page
+        result1 = self.account.get(self.LINK_COLTZAN)
+        soup1 = bs(result1.content, 'lxml')
+        soup1_matches = soup1.select('.content div form input')
+        soup1_match = soup1_matches[1]  # First match is hidden input
+
+        # Approach the shrine
+        if soup1_match and soup1_match.get('value') == self.TEXT_COLTZAN:
+            result2 = self.account.post(
+                self.LINK_COLTZAN,
+                data=self.DATA_COLTZAN,
+                referer=self.LINK_COLTZAN
+            )
+            self.save(result2, 'coltzan')
+            soup2 = bs(result2.content, 'lxml')
+            soup2_match = soup2.select_one('.content div div p')
+            logger.info(soup2_match.get_text())
+        else:
+            logger.info('Already visited today!')
