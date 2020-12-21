@@ -299,7 +299,7 @@ class Freebies:
                     },
                     referer=self.LINK_ADVENT_1
                 )
-                self.save(result2, 'advent')
+                self.save(result2, 'adventHidden')
                 logger.info('Received: {}'.format(result2.json()['prize']['name']))
 
             # Get rewards
@@ -307,6 +307,7 @@ class Freebies:
                 self.LINK_ADVENT_3,
                 referer=self.LINK_ADVENT_1
             )
+            self.save(result3, 'adventRegular')
             soup3 = bs(result3.content, 'lxml')
             soup3_matches = soup3.select('.content div center b')
             if soup3_matches:
