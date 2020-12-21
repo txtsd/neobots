@@ -351,7 +351,7 @@ class Freebies:
         soup1_matches = soup1.select('.content div form input')
         soup1_match = soup1_matches[1]  # First match is hidden input
 
-        # Approach the shrine
+        # Approach the shrine + also works for nothing happens
         if soup1_match and soup1_match.get('value') == self.TEXT_COLTZAN:
             result2 = self.account.post(
                 self.LINK_COLTZAN,
