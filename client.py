@@ -42,3 +42,4 @@ if account.login():
     freebies.doAnchor()
     freebies.doAppleBobbing()
     freebies.doAdvent()
+    freebies.doBankCollect()

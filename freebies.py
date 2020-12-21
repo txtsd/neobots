@@ -32,6 +32,8 @@ class Freebies:
         self.LINK_ADVENT_1 = '/winter/adventcalendar.phtml'
         self.LINK_ADVENT_2 = '/winter/adventClick.php'
         self.LINK_ADVENT_3 = '/winter/process_adventcalendar.phtml'
+        self.LINK_BANK_1 = '/bank.phtml'
+        self.LINK_BANK_2 = '/process_bank.phtml'
 
         # Params
         self.PARAMS_TRUDY = {'delevent': 'yes'}
@@ -40,6 +42,7 @@ class Freebies:
         # POST Data
         self.DATA_TRUDY_1 = {'action': 'beginroll'}
         self.DATA_TRUDY_2 = {'action': 'prizeclaimed'}
+        self.DATA_BANK = {'type': 'interest'}
 
         # Search texts
         self.TEXT_TRUDY = "Trudy's Surprise"
@@ -60,6 +63,7 @@ class Freebies:
         self.PATTERN_APPLEBOB_1 = re.compile(r'As you gaze into the water, about to bob your head in for a chance at appley-goodness')
         self.PATTERN_ADVENT_1 = re.compile(r'day: "(?P<day>\d+?)"')
         self.PATTERN_ADVENT_2 = re.compile(r'ck: "(?P<ck>.+?)"')
+        self.PATTERN_BANK = re.compile(r'Collect Interest \((?P<np>\d+) NP\)')
 
     def save(self, reply, name, JSON=False):
         timeNow = time.time_ns()
@@ -305,3 +309,31 @@ class Freebies:
                 logger.info('Received nothing!')
         else:
             logger.info('Already visited today!')
+
+    def doBankCollect(self):
+        # Setup logger
+        logger = logging.getLogger('neobots.Freebies.BankCollect')
+
+        # Visit page
+        result1 = self.account.get(self.LINK_BANK_1)
+        soup = bs(result1.content, 'lxml')
+        soup_matches = soup.select('.contentModuleContent div form input')
+        if soup_matches:
+            soup_match = soup_matches[-1]  # Last match since there are other form inputs
+            match = self.PATTERN_BANK.search(soup_match.get('value'))
+
+            # Collect interest
+            if match:
+                result2 = self.account.post(
+                    self.LINK_BANK_2,
+                    data=self.DATA_BANK,
+                    referer=self.LINK_BANK_1
+                )
+                self.save(result2, 'bankCollect')
+                logger.info('Collected: {} NP'.format(match['np']))
+            else:
+                logger.warning('No collect button!')
+        else:
+            logger.info('Already collected or transacted today!')
+
+        # TODO: Add auto bank account upgrade
