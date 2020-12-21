@@ -37,6 +37,7 @@ class Freebies:
         self.LINK_COLTZAN = '/desert/shrine.phtml'
         self.LINK_PUZZLE_1 = '/community/index.phtml'
         self.LINK_PUZZLE_2 = 'http://www.jellyneo.net/?go=dailypuzzle'
+        self.LINK_QUARRY = '/magma/quarry.phtml'
 
         # Params
         self.PARAMS_TRUDY = {'delevent': 'yes'}
@@ -53,6 +54,7 @@ class Freebies:
         self.TEXT_SNOWAGER = 'Attempt to steal a piece of treasure'
         self.TEXT_ADVENT = 'Collect My Prize!!!'
         self.TEXT_COLTZAN = 'Approach the Shrine'
+        self.TEXT_QUARRY = "Hey!  What do you think you're doing?!"
 
         # Regexes
         self.PATTERN_TRUDY_1 = re.compile(r'(?P<link>/trudydaily/slotgame\.phtml\?id=(?P<id>.*?)&slt=(?P<slt>\d+))')
@@ -419,3 +421,18 @@ class Freebies:
                 logger.error('Matching trivia answer not found!')
         else:
             logger.error('Matching trivia question not found!')
+
+    def doQuarry(self):
+        # Setup logger
+        logger = logging.getLogger('neobots.Freebies.Quarry')
+
+        # Visit page
+        result = self.account.get(self.LINK_QUARRY)
+        self.save(result, 'quarry')
+        soup = bs(result.content, 'lxml')
+        soup_match = soup.select_one('.content div b')
+
+        if soup_match and not soup_match.get_text() == self.TEXT_QUARRY:
+            logger.info('Received: {}'.format(soup_match.get_text()))
+        else:
+            logger.info('Already visited today!')

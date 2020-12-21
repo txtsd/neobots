@@ -45,3 +45,4 @@ if account.login():
     freebies.doBankCollect()
     freebies.doColtzan()
     freebies.doDailyPuzzle()
+    freebies.doQuarry()
