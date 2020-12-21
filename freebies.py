@@ -414,9 +414,13 @@ class Freebies:
                 self.save(result3, 'dailyPuzzle')
                 soup3 = bs(result3.content, 'lxml')
                 soup3_matches = soup3.select('.question b')
-                logger.info('Received: {} NP'.format(soup3_matches[0].get_text()))
+                # If NP and item
                 if len(soup3_matches) > 1:
+                    logger.info('Received: {} NP'.format(soup3_matches[0].get_text()))
                     logger.info('Received: {}'.format(soup3_matches[1].get_text()))
+                # Else if only NP
+                else:
+                    logger.info('Received: {}'.format(soup3_matches[0].get_text()))
             else:
                 logger.error('Matching trivia answer not found!')
         else:
