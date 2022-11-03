@@ -2,6 +2,8 @@
 
 ![neobots](https://i.imgur.com/1FSmg4P.png)
 
+neobots is a Habitarium autoplayer
+
 ## Links
 
 Project: <https://sr.ht/~txtsd/neobots/> <br>
